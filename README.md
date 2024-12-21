@@ -194,7 +194,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 📧 Contact
 
 - Project Link: [https://github.com/yourusername/meet-app](https://github.com/yourusername/meet-app)
-- Your Name - [@yourgithub](https://github.com/yourgithub)
+- Your Name - [@yourgithub](https://github.com/jf8989)
 
 ---
 
