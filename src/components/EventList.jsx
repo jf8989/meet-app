@@ -1,12 +1,19 @@
 // src/components/EventList.jsx
 
-// This component will eventually display a list of events
-const EventList = () => {
+import Event from './Event';
+import PropTypes from 'prop-types';
+
+const EventList = ({ events = [] }) => {
     return (
-        // The id="event-list" is used by our tests to find this element
-        // Currently empty, but will later contain event items
-        <div id="event-list"></div>
+        <ul id="event-list">
+            {events.map(event => (
+                <Event key={event.id} event={event} />
+            ))}
+        </ul>
     );
+};
+EventList.propTypes = {
+    events: PropTypes.arrayOf(PropTypes.object)
 };
 
 export default EventList;
