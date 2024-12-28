@@ -2,7 +2,6 @@
 
 // Importing necessary testing utilities
 import { render } from '@testing-library/react';  // Helps us render React components in tests
-import '@testing-library/jest-dom';              // Adds helpful matchers for testing DOM elements
 import App from '../App';                        // The component we're testing
 import { test, expect } from '@jest/globals';    // Jest's test functions
 
