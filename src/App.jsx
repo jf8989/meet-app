@@ -1,19 +1,39 @@
 // src/App.jsx
+import { useState, useEffect } from 'react';
 import EventList from './components/EventList';
 
-// Main App component that serves as the root of our application
 const App = () => {
-  const mockEvents = [
-    { id: 1, title: 'Event 1' },
-    { id: 2, title: 'Event 2' },
-    { id: 3, title: 'Event 3' }
-  ];
+  const [events, setEvents] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const fetchEvents = async () => {
+    try {
+      const response = await fetch(
+        'https://vyolkxwvs3.execute-api.eu-central-1.amazonaws.com/dev/api/get-events'
+      );
+      const json = await response.json();
+      setEvents(json.events || []); // Add fallback empty array
+      setIsLoading(false);
+    } catch (error) {
+      console.error(error);
+      setIsLoading(false);
+      setEvents([]); // Set empty array on error
+    }
+  };
+
+  useEffect(() => {
+    fetchEvents();
+  }, []);
 
   return (
     <div className="App">
-      <EventList events={mockEvents} />
+      {isLoading ? (
+        <div>Loading events...</div>
+      ) : (
+        <EventList events={events} />
+      )}
     </div>
   );
-}
+};
 
 export default App;
