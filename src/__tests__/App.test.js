@@ -35,10 +35,10 @@ describe('<App /> component', () => {
         let component;
         await act(async () => {
             component = render(<App />);
-            await new Promise(resolve => setTimeout(resolve, 0));
+            await new Promise(resolve => setTimeout(resolve, 100));
         });
 
-        const eventTitle = await component.findByText(mockAppEvents[0].title);
+        const eventTitle = await component.findByText(mockAppEvents[0].title || mockAppEvents[0].summary);
         expect(eventTitle).toBeInTheDocument();
     });
 

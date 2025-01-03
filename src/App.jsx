@@ -2,11 +2,13 @@
 import { useState, useEffect } from 'react';
 import EventList from './components/EventList';
 import CitySearch from './components/CitySearch';
+import NumberOfEvents from './components/NumberOfEvents';
 
 const App = () => {
   const [events, setEvents] = useState([]);
   const [currentCity, setCurrentCity] = useState('all');
   const [isLoading, setIsLoading] = useState(true);
+  const [eventCount, setEventCount] = useState(32); // Default event count
   const [error, setError] = useState(null);
 
   const fetchEvents = async () => {
@@ -44,6 +46,7 @@ const App = () => {
         allLocations={Array.from(new Set(events.map(event => event.location)))}
         onSelectCity={handleCitySelect}
       />
+      <NumberOfEvents eventCount={eventCount} setEventCount={(count) => setEventCount(count)} />
       {error && <div className="error-alert">{error}</div>}
       {isLoading ? (
         <div>Loading events...</div>

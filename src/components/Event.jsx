@@ -7,9 +7,9 @@ const Event = ({ event }) => {
 
     return (
         <li className="event">
-            <h2>{event.summary}</h2>
+            <h2>{event.title || event.summary}</h2>
             <p className="location">{event.location}</p>
-            <p className="date">{event.created}</p>
+            <p className="date">{event.dateTime || event.created}</p>
             <button
                 className="details-btn"
                 onClick={() => setShowDetails(!showDetails)}
@@ -27,9 +27,12 @@ const Event = ({ event }) => {
 
 Event.propTypes = {
     event: PropTypes.shape({
-        summary: PropTypes.string.isRequired,
+        id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+        title: PropTypes.string.isRequired,       // This matches mockAppEvents
+        summary: PropTypes.string,                // This matches mockCalendarEvents
         location: PropTypes.string.isRequired,
-        created: PropTypes.string.isRequired,
+        dateTime: PropTypes.string,               // This matches mockAppEvents
+        created: PropTypes.string,                // This matches mockCalendarEvents
         description: PropTypes.string.isRequired
     }).isRequired
 };

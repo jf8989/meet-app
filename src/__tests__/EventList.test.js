@@ -25,6 +25,6 @@ describe('<EventList /> component', () => {
 
     test('renders events with correct content', () => {
         const { getByText } = render(<EventList events={[mockAppEvents[0]]} />);
-        expect(getByText(mockAppEvents[0].title)).toBeInTheDocument();
+        expect(getByText(mockAppEvents[0].title || mockAppEvents[0].summary)).toBeInTheDocument();
     });
 });

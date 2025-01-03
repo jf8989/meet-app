@@ -75,7 +75,7 @@ export const mockCalendarEvents = [
 // Simplified format for app's internal use
 export const mockAppEvents = [
     {
-        id: 1,
+        id: "4eahs9ghkhrvkld72hogu9ph3e",
         title: "Learn JavaScript",
         location: "London, UK",
         dateTime: "2024-12-28T19:00:00Z",

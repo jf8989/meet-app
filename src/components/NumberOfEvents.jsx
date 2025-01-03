@@ -7,7 +7,7 @@ const NumberOfEvents = ({ setEventCount }) => {
     const [error, setError] = useState('');
 
     const handleInputChanged = (event) => {
-        const value = parseInt(event.target.value);
+        const value = parseInt(event.target.value) || 32; // Default to 32 if NaN
 
         if (value < 1 || value > 100) {
             setError('Number must be between 1 and 100');

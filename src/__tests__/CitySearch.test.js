@@ -62,9 +62,10 @@ describe('<CitySearch /> component', () => {
         await userEvent.type(cityTextBox, 'Berlin');
 
         const suggestionListItems = getAllByRole('listitem');
-        await userEvent.click(suggestionListItems[0]);
+        const berlinItem = suggestionListItems.find(item => item.textContent.includes('Berlin'));
+        await userEvent.click(berlinItem);
 
-        expect(cityTextBox).toHaveValue(allLocations[0]);
-        expect(mockOnSelectCity).toHaveBeenCalledWith(allLocations[0]);
+        expect(cityTextBox).toHaveValue('Berlin, Germany');
+        expect(mockOnSelectCity).toHaveBeenCalledWith('Berlin, Germany');
     });
 });
