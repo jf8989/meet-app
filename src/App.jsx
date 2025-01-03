@@ -1,6 +1,7 @@
 // src/App.jsx
 import { useState, useEffect } from 'react';
 import EventList from './components/EventList';
+import CitySearch from './components/CitySearch';
 
 const App = () => {
   const [events, setEvents] = useState([]);
@@ -29,6 +30,7 @@ const App = () => {
 
   return (
     <div className="App">
+      <CitySearch /> {/* Add this line before EventList */}
       {error && <div className="error-alert">{error}</div>}
       {isLoading ? (
         <div>Loading events...</div>

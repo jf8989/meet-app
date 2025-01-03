@@ -81,4 +81,9 @@ describe('<App /> component', () => {
         expect(eventTitle).toBeInTheDocument();
         expect(eventLocation).toBeInTheDocument();
     });
+
+    test('renders CitySearch', () => {
+        const { getByTestId } = render(<App />);
+        expect(getByTestId('city-search')).toBeInTheDocument();
+    });
 });
