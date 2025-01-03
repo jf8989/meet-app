@@ -5,10 +5,9 @@ import CitySearch from './components/CitySearch';
 
 const App = () => {
   const [events, setEvents] = useState([]);
+  const [currentCity, setCurrentCity] = useState('all');
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const allLocations = events.map(event => event.location);
-  const uniqueLocations = [...new Set(allLocations)];
 
   const fetchEvents = async () => {
     try {
@@ -26,18 +25,30 @@ const App = () => {
     }
   };
 
+  const handleCitySelect = (city) => {
+    setCurrentCity(city);
+  };
+
+  const filterEventsByCity = (events, city) => {
+    if (city === 'all') return events;
+    return events.filter(event => event.location === city);
+  };
+
   useEffect(() => {
     fetchEvents();
   }, []);
 
   return (
     <div className="App">
-      <CitySearch allLocations={uniqueLocations} />
+      <CitySearch
+        allLocations={Array.from(new Set(events.map(event => event.location)))}
+        onSelectCity={handleCitySelect}
+      />
       {error && <div className="error-alert">{error}</div>}
       {isLoading ? (
         <div>Loading events...</div>
       ) : (
-        <EventList events={events} />
+        <EventList events={filterEventsByCity(events, currentCity)} />
       )}
     </div>
   );

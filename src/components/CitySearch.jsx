@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 
-const CitySearch = ({ allLocations = [] }) => {
+const CitySearch = ({ allLocations = [], onSelectCity }) => {
     const [query, setQuery] = useState('');
     const [suggestions, setSuggestions] = useState([]);
     const [showSuggestions, setShowSuggestions] = useState(false);
@@ -19,6 +19,14 @@ const CitySearch = ({ allLocations = [] }) => {
         setShowSuggestions(true);
     };
 
+    const handleItemClick = (suggestion) => {
+        setQuery(suggestion);
+        setShowSuggestions(false);
+        if (onSelectCity) {
+            onSelectCity(suggestion);
+        }
+    };
+
     return (
         <div data-testid="city-search">
             <input
@@ -31,15 +39,22 @@ const CitySearch = ({ allLocations = [] }) => {
             {showSuggestions && (
                 <ul>
                     {suggestions.map((suggestion, index) => (
-                        <li key={index}>{suggestion}</li>
+                        <li
+                            key={index}
+                            onClick={() => handleItemClick(suggestion)}
+                        >
+                            {suggestion}
+                        </li>
                     ))}
                 </ul>
             )}
         </div>
     );
 };
+
 CitySearch.propTypes = {
-    allLocations: PropTypes.arrayOf(PropTypes.string)
+    allLocations: PropTypes.arrayOf(PropTypes.string),
+    onSelectCity: PropTypes.func
 };
 
 export default CitySearch;

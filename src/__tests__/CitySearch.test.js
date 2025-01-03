@@ -2,7 +2,7 @@
 import { render, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import CitySearch from '../components/CitySearch';
-import { describe, test, expect } from '@jest/globals';
+import { describe, test, expect, jest } from '@jest/globals';
 
 describe('<CitySearch /> component', () => {
     test('renders text input', () => {
@@ -57,5 +57,45 @@ describe('<CitySearch /> component', () => {
 
         expect(suggestions).toHaveLength(allLocations.length);
         expect(suggestions.map(li => li.textContent)).toEqual(allLocations);
+    });
+
+    test('selects a city from the suggestion list', async () => {
+        const allLocations = ['Berlin, Germany', 'Paris, France', 'London, UK'];
+        const mockOnSelectCity = jest.fn();
+        const { getByPlaceholderText, getAllByRole } = render(
+            <CitySearch
+                allLocations={allLocations}
+                onSelectCity={mockOnSelectCity}
+            />
+        );
+
+        const cityTextBox = getByPlaceholderText('Search for a city');
+        await userEvent.type(cityTextBox, 'Berlin');
+
+        const suggestionListItems = getAllByRole('listitem');
+        await userEvent.click(suggestionListItems[0]);
+
+        // Update this line to use the correct assertion
+        expect(cityTextBox).toHaveValue('Berlin, Germany');
+        expect(mockOnSelectCity).toHaveBeenCalledWith('Berlin, Germany');
+    });
+
+    test('filters events by selected city', async () => {
+        const allLocations = ['Berlin, Germany', 'Paris, France'];
+        const onSelectCity = jest.fn();
+
+        const { getByPlaceholderText, getAllByRole } = render(
+            <CitySearch
+                allLocations={allLocations}
+                onSelectCity={onSelectCity}
+            />
+        );
+
+        const cityTextBox = getByPlaceholderText('Search for a city');
+        await userEvent.type(cityTextBox, 'Berlin');
+        const berlinSuggestion = getAllByRole('listitem')[0];
+        await userEvent.click(berlinSuggestion);
+
+        expect(onSelectCity).toHaveBeenCalledWith('Berlin, Germany');
     });
 });
