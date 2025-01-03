@@ -4,6 +4,7 @@ import { describe, test, expect } from '@jest/globals';
 import EventList from '../components/EventList';
 
 describe('<EventList /> component', () => {
+    // Your existing test - keep exactly as is
     test('renders correct number of events', () => {
         const mockEvents = [
             {
@@ -31,5 +32,31 @@ describe('<EventList /> component', () => {
         const EventListComponent = render(<EventList events={mockEvents} />);
         const eventElements = EventListComponent.getAllByRole("listitem");
         expect(eventElements).toHaveLength(3);
+    });
+
+    // Add these new tests
+    test('renders empty list when no events are passed', () => {
+        const { getByTestId } = render(<EventList />);
+        const list = getByTestId('event-list');
+        expect(list).toBeInTheDocument();
+        expect(list.children).toHaveLength(0);
+    });
+
+    test('renders list with correct data-testid', () => {
+        const { getByTestId } = render(<EventList />);
+        expect(getByTestId('event-list')).toBeInTheDocument();
+    });
+
+    test('renders events with correct content', () => {
+        const mockEvent = [{
+            id: 1,
+            title: 'Test Event',
+            location: 'Test Location',
+            dateTime: '2024-12-28T19:00:00Z',
+            description: 'Test Description'
+        }];
+
+        const { getByText } = render(<EventList events={mockEvent} />);
+        expect(getByText('Test Event')).toBeInTheDocument();
     });
 });

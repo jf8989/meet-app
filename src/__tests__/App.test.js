@@ -1,7 +1,7 @@
 // src/__tests__/App.test.js
 import { render, act } from '@testing-library/react';
 import App from '../App';
-import { describe, test, expect, beforeEach, jest, afterEach } from '@jest/globals';
+import { describe, test, expect, beforeEach, jest } from '@jest/globals';
 
 describe('<App /> component', () => {
     beforeEach(() => {
@@ -28,9 +28,16 @@ describe('<App /> component', () => {
 
     test('renders list of events', async () => {
         let component;
+
+        // Render first
+        component = render(<App />);
+
+        // Then wait for loading to finish and component to update
         await act(async () => {
-            component = render(<App />);
+            await new Promise(resolve => setTimeout(resolve, 100));
         });
+
+        // Now check for the event list
         const eventList = await component.findByTestId('event-list');
         expect(eventList).toBeInTheDocument();
     });
@@ -39,12 +46,39 @@ describe('<App /> component', () => {
         let component;
         await act(async () => {
             component = render(<App />);
+            // Wait for all state updates and promises to resolve
+            await new Promise(resolve => setTimeout(resolve, 0));
         });
+        // Now find the element after all updates are complete
         const eventTitle = await component.findByText('Test Event');
         expect(eventTitle).toBeInTheDocument();
     });
 
-    afterEach(() => {
-        jest.restoreAllMocks();
+    test('renders number of events equal to mock data length', async () => {
+        let component;
+        await act(async () => {
+            component = render(<App />);
+            // Wait for all state updates and promises to resolve
+            await new Promise(resolve => setTimeout(resolve, 0));
+        });
+        // Now find the elements after all updates are complete
+        const eventItems = await component.findAllByRole('listitem');
+        expect(eventItems).toHaveLength(1); // matches your current mock events length
+    });
+
+    test('displays all event details correctly', async () => {
+        let component;
+        await act(async () => {
+            component = render(<App />);
+            // Wait for all state updates and promises to resolve
+            await new Promise(resolve => setTimeout(resolve, 0));
+        });
+
+        // Check for each piece of event information after all updates are complete
+        const eventTitle = await component.findByText('Test Event');
+        const eventLocation = await component.findByText('Test Location');
+
+        expect(eventTitle).toBeInTheDocument();
+        expect(eventLocation).toBeInTheDocument();
     });
 });

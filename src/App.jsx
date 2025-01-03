@@ -5,6 +5,7 @@ import EventList from './components/EventList';
 const App = () => {
   const [events, setEvents] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const fetchEvents = async () => {
     try {
@@ -12,12 +13,13 @@ const App = () => {
         'https://vyolkxwvs3.execute-api.eu-central-1.amazonaws.com/dev/api/get-events'
       );
       const json = await response.json();
-      setEvents(json.events || []); // Add fallback empty array
+      setEvents(json.events || []);
       setIsLoading(false);
     } catch (error) {
-      console.error(error);
+      console.error('Error fetching events:', error);
+      setError('Failed to load events. Please try again later.');
       setIsLoading(false);
-      setEvents([]); // Set empty array on error
+      setEvents([]);
     }
   };
 
@@ -27,6 +29,7 @@ const App = () => {
 
   return (
     <div className="App">
+      {error && <div className="error-alert">{error}</div>}
       {isLoading ? (
         <div>Loading events...</div>
       ) : (
