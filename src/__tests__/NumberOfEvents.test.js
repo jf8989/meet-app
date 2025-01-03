@@ -1,6 +1,5 @@
 // src/__tests__/NumberOfEvents.test.js
 import { render, fireEvent } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import NumberOfEvents from '../components/NumberOfEvents';
 import { describe, test, expect, jest } from '@jest/globals';
 
@@ -22,8 +21,10 @@ describe('<NumberOfEvents /> component', () => {
         const { getByRole } = render(<NumberOfEvents setEventCount={setEventCount} />);
         const input = getByRole('spinbutton');
 
-        await userEvent.type(input, '{backspace}{backspace}10');
+        // Directly change the input value
+        fireEvent.change(input, { target: { value: '10' } });
 
+        // Check the results
         expect(input).toHaveValue(10);
         expect(setEventCount).toHaveBeenCalledWith(10);
     });

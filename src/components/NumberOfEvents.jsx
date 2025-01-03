@@ -7,16 +7,26 @@ const NumberOfEvents = ({ setEventCount }) => {
     const [error, setError] = useState('');
 
     const handleInputChanged = (event) => {
-        const value = parseInt(event.target.value) || 32; // Default to 32 if NaN
+        // Remove the parsing initially to handle raw input
+        const rawValue = event.target.value;
+        const parsedValue = parseInt(rawValue);
 
-        if (value < 1 || value > 100) {
+        // Handle empty or invalid input
+        if (rawValue === '' || isNaN(parsedValue)) {
+            setError('Please enter a valid number');
+            return;
+        }
+
+        // Check range
+        if (parsedValue < 1 || parsedValue > 100) {
             setError('Number must be between 1 and 100');
             return;
         }
 
+        // Clear error and update values
         setError('');
-        setNumber(value);
-        setEventCount(value);
+        setNumber(parsedValue);
+        setEventCount(parsedValue);
     };
 
     return (
