@@ -1,5 +1,5 @@
 // src/__tests__/CitySearch.test.js
-import { render } from '@testing-library/react';
+import { render, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import CitySearch from '../components/CitySearch';
 import { describe, test, expect } from '@jest/globals';
@@ -23,5 +23,39 @@ describe('<CitySearch /> component', () => {
         await userEvent.type(cityTextBox, 'Berlin');
         const suggestionList = getByRole('list');
         expect(suggestionList).toBeInTheDocument();
+    });
+
+    test('updates suggestions list when user types in city textbox', async () => {
+        const allLocations = ['Berlin, Germany', 'Paris, France', 'Berlin, New Hampshire'];
+        const { getByRole, getByPlaceholderText } = render(
+            <CitySearch allLocations={allLocations} />
+        );
+
+        const cityTextBox = getByPlaceholderText('Search for a city');
+        await userEvent.type(cityTextBox, 'Berlin');
+
+        const suggestionList = getByRole('list');
+        const suggestions = within(suggestionList).getAllByRole('listitem');
+
+        expect(suggestions).toHaveLength(2);
+        expect(suggestions[0].textContent).toBe('Berlin, Germany');
+        expect(suggestions[1].textContent).toBe('Berlin, New Hampshire');
+    });
+
+    test('renders all locations when textbox is empty', async () => {
+        const allLocations = ['Berlin, Germany', 'Paris, France', 'London, UK'];
+        const { getByRole, getByPlaceholderText } = render(
+            <CitySearch allLocations={allLocations} />
+        );
+
+        const cityTextBox = getByPlaceholderText('Search for a city');
+        await userEvent.type(cityTextBox, 'a'); // First type something
+        await userEvent.clear(cityTextBox); // Then clear it
+
+        const suggestionList = getByRole('list');
+        const suggestions = within(suggestionList).getAllByRole('listitem');
+
+        expect(suggestions).toHaveLength(allLocations.length);
+        expect(suggestions.map(li => li.textContent)).toEqual(allLocations);
     });
 });

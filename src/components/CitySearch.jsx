@@ -1,14 +1,22 @@
 // src/components/CitySearch.jsx
 import { useState } from 'react';
+import PropTypes from 'prop-types';
 
-const CitySearch = () => {
+const CitySearch = ({ allLocations = [] }) => {
     const [query, setQuery] = useState('');
+    const [suggestions, setSuggestions] = useState([]);
     const [showSuggestions, setShowSuggestions] = useState(false);
 
     const handleInputChange = (event) => {
         const value = event.target.value;
         setQuery(value);
-        setShowSuggestions(value.length > 0);
+        const filteredLocations = value ?
+            allLocations.filter(location =>
+                location.toLowerCase().includes(value.toLowerCase())
+            ) :
+            allLocations;
+        setSuggestions(filteredLocations);
+        setShowSuggestions(true);
     };
 
     return (
@@ -18,16 +26,20 @@ const CitySearch = () => {
                 placeholder="Search for a city"
                 value={query}
                 onChange={handleInputChange}
+                onFocus={() => setShowSuggestions(true)}
             />
             {showSuggestions && (
                 <ul>
-                    {/* We'll add suggestions here in the next iteration */}
-                    <li>Suggestion 1</li>
-                    <li>Suggestion 2</li>
+                    {suggestions.map((suggestion, index) => (
+                        <li key={index}>{suggestion}</li>
+                    ))}
                 </ul>
             )}
         </div>
     );
+};
+CitySearch.propTypes = {
+    allLocations: PropTypes.arrayOf(PropTypes.string)
 };
 
 export default CitySearch;

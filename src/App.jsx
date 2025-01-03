@@ -7,6 +7,8 @@ const App = () => {
   const [events, setEvents] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const allLocations = events.map(event => event.location);
+  const uniqueLocations = [...new Set(allLocations)];
 
   const fetchEvents = async () => {
     try {
@@ -30,7 +32,7 @@ const App = () => {
 
   return (
     <div className="App">
-      <CitySearch /> {/* Add this line before EventList */}
+      <CitySearch allLocations={uniqueLocations} />
       {error && <div className="error-alert">{error}</div>}
       {isLoading ? (
         <div>Loading events...</div>
