@@ -34,20 +34,25 @@ const credentials = {
 const { client_secret, client_id, redirect_uris } = credentials;
 const oAuth2Client = new OAuth2(client_id, client_secret, redirect_uris[0]);
 
-export const getAuthURL = async () => {
+export const getAuthURL = async (event) => {
     const authUrl = oAuth2Client.generateAuthUrl({
         access_type: "offline",
         scope: SCOPES,
     });
 
+    const allowedOrigins = [
+        "https://meet-app-navy.vercel.app",
+        "http://localhost:5173",
+    ];
+
+    const origin = event.headers.origin;
+
     return {
         statusCode: 200,
         headers: {
-            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Origin": allowedOrigins.includes(origin) ? origin : "https://meet-app-navy.vercel.app",
             "Access-Control-Allow-Credentials": true,
         },
-        body: JSON.stringify({
-            authUrl,
-        }),
+        body: JSON.stringify({ authUrl }),
     };
 };
