@@ -18,6 +18,9 @@ functions:
           method: get
           cors: true
 
+build:
+  esbuild: false
+
 custom:
   esbuild:
     format: esm

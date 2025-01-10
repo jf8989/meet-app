@@ -1,0 +1,7 @@
+service: auth-server
+stage: dev
+region: us-east-1
+stack: auth-server-dev
+endpoint: GET - https://c8hxspnpk5.execute-api.us-east-1.amazonaws.com/dev/api/get-auth-url
+functions:
+  getAuthURL: auth-server-dev-getAuthURL
