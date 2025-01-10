@@ -1,0 +1,30 @@
+service: auth-server
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: us-east-1
+  environment:
+    CLIENT_ID: ${env:CLIENT_ID}
+    CLIENT_SECRET: ${env:CLIENT_SECRET}
+    PROJECT_ID: ${env:PROJECT_ID}
+
+functions:
+  getAuthURL:
+    handler: handler.getAuthURL
+    events:
+      - http:
+          path: api/get-auth-url
+          method: get
+          cors: true
+
+custom:
+  esbuild:
+    format: esm
+    platform: node
+    target: node18
+    bundle: true
+    minify: false
+
+plugins:
+  - serverless-esbuild

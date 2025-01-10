@@ -1,0 +1,21 @@
+{
+  "name": "auth-server",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "handler.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "Serverless auth server for Meet app",
+  "dependencies": {
+    "auth-server": "file:",
+    "dotenv": "^16.4.7",
+    "googleapis": "^144.0.0"
+  },
+  "devDependencies": {
+    "serverless-esbuild": "^1.54.6"
+  }
+}
