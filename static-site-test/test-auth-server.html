@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Test Auth Server</title>
+    <style>
+        #container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .step {
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            margin: 10px 0;
+        }
+
+        pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="container">
+        <h1>OAuth2 Test</h1>
+
+        <!-- STEP 1 -->
+        <div class="step">
+            <h4>Step 1: Get the OAuth URL</h4>
+            <button id="getAuthUrlButton">Get OAuth URL</button>
+            <p id="result"></p>
+        </div>
+
+        <!-- STEP 2 -->
+        <div class="step">
+            <h4>Step 2: Get the access token</h4>
+            <p>After logging in, copy the code from the URL and paste it here:</p>
+            <input id="code" type="text" size="50" />
+            <button id="getToken">Get Token</button>
+            <p id="accessToken"></p>
+        </div>
+
+        <!-- STEP 3 -->
+        <div class="step">
+            <h4>Step 3: Get the calendar events using your access token</h4>
+            <button id="getEvents">Get Events</button>
+            <p id="events"></p>
+        </div>
+    </div>
+
+    <script>
+        // STEP 1
+        const getAuthURL = "https://c8hxspnpk5.execute-api.us-east-1.amazonaws.com/dev/api/get-auth-url";
+        document.getElementById("getAuthUrlButton").onclick = () => {
+            fetch(getAuthURL)
+                .then(res => res.json())
+                .then(json => {
+                    const result = document.getElementById("result");
+                    const { authUrl } = json;
+                    result.innerHTML = `<a href="${authUrl}">Click to authorize</a>`;
+                });
+        };
+
+        // STEP 2
+        const getTokenEndpoint = "https://c8hxspnpk5.execute-api.us-east-1.amazonaws.com/dev/api/token";
+        document.getElementById("getToken").onclick = () => {
+            let code = document.getElementById("code").value;
+            if (decodeURIComponent(code) === code) {
+                code = encodeURIComponent(code);
+            }
+            const getTokenRequest = getTokenEndpoint + "/" + code;
+            fetch(getTokenRequest)
+                .then(res => res.json())
+                .then(json => {
+                    document.getElementById("accessToken").innerText = JSON.stringify(json, null, 2);
+                });
+        };
+
+        // STEP 3
+        const getCalendarEvents = "https://c8hxspnpk5.execute-api.us-east-1.amazonaws.com/dev/api/get-events";
+        document.getElementById("getEvents").onclick = () => {
+            const accessToken = JSON.parse(document.getElementById("accessToken").innerText).access_token;
+            const eventRequest = getCalendarEvents + "/" + accessToken;
+            fetch(eventRequest)
+                .then(res => res.json())
+                .then(json => {
+                    document.getElementById("events").innerText = JSON.stringify(json, null, 2);
+                });
+        };
+    </script>
+</body>
+
+</html>

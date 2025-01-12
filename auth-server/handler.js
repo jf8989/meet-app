@@ -13,8 +13,10 @@ const __dirname = dirname(__filename);
 dotenv.config({ path: path.join(__dirname, '.env') });
 
 const OAuth2 = google.auth.OAuth2;
+const calendar = google.calendar('v3');
 
 const SCOPES = ["https://www.googleapis.com/auth/calendar.readonly"];
+const CALENDAR_ID = 'fullstackwebdev@careerfoundry.com';
 
 const credentials = {
     client_id: process.env.CLIENT_ID,
@@ -34,25 +36,84 @@ const credentials = {
 const { client_secret, client_id, redirect_uris } = credentials;
 const oAuth2Client = new OAuth2(client_id, client_secret, redirect_uris[0]);
 
+const getAllowedHeaders = (origin) => {
+    const allowedOrigins = [
+        "https://meet-app-navy.vercel.app",
+        "http://localhost:5173",
+    ];
+
+    return {
+        "Access-Control-Allow-Origin": allowedOrigins.includes(origin) ? origin : "https://meet-app-navy.vercel.app",
+        "Access-Control-Allow-Credentials": true,
+    };
+};
+
 export const getAuthURL = async (event) => {
     const authUrl = oAuth2Client.generateAuthUrl({
         access_type: "offline",
         scope: SCOPES,
     });
 
-    const allowedOrigins = [
-        "https://meet-app-navy.vercel.app",
-        "http://localhost:5173",
-    ];
-
-    const origin = event.headers.origin;
-
     return {
         statusCode: 200,
-        headers: {
-            "Access-Control-Allow-Origin": allowedOrigins.includes(origin) ? origin : "https://meet-app-navy.vercel.app",
-            "Access-Control-Allow-Credentials": true,
-        },
+        headers: getAllowedHeaders(event.headers.origin),
         body: JSON.stringify({ authUrl }),
     };
+};
+
+export const getAccessToken = async (event) => {
+    const code = decodeURIComponent(`${event.pathParameters.code}`);
+
+    return new Promise((resolve, reject) => {
+        oAuth2Client.getToken(code, (error, response) => {
+            if (error) {
+                return reject(error);
+            }
+            resolve(response);
+        });
+    })
+        .then((results) => ({
+            statusCode: 200,
+            headers: getAllowedHeaders(event.headers.origin),
+            body: JSON.stringify(results),
+        }))
+        .catch((error) => ({
+            statusCode: 500,
+            headers: getAllowedHeaders(event.headers.origin),
+            body: JSON.stringify(error),
+        }));
+};
+
+export const getCalendarEvents = async (event) => {
+    const access_token = decodeURIComponent(`${event.pathParameters.access_token}`);
+    oAuth2Client.setCredentials({ access_token });
+
+    return new Promise((resolve, reject) => {
+        calendar.events.list(
+            {
+                calendarId: CALENDAR_ID,
+                auth: oAuth2Client,
+                timeMin: new Date().toISOString(),
+                singleEvents: true,
+                orderBy: "startTime",
+            },
+            (error, response) => {
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve(response);
+                }
+            }
+        );
+    })
+        .then((results) => ({
+            statusCode: 200,
+            headers: getAllowedHeaders(event.headers.origin),
+            body: JSON.stringify({ events: results.data.items }),
+        }))
+        .catch((error) => ({
+            statusCode: 500,
+            headers: getAllowedHeaders(event.headers.origin),
+            body: JSON.stringify(error),
+        }));
 };

@@ -2,6 +2,11 @@ service: auth-server
 stage: dev
 region: us-east-1
 stack: auth-server-dev
-endpoint: GET - https://c8hxspnpk5.execute-api.us-east-1.amazonaws.com/dev/api/get-auth-url
+endpoints:
+  GET - https://c8hxspnpk5.execute-api.us-east-1.amazonaws.com/dev/api/get-auth-url
+  GET - https://c8hxspnpk5.execute-api.us-east-1.amazonaws.com/dev/api/token/{code}
+  GET - https://c8hxspnpk5.execute-api.us-east-1.amazonaws.com/dev/api/get-events/{access_token}
 functions:
   getAuthURL: auth-server-dev-getAuthURL
+  getAccessToken: auth-server-dev-getAccessToken
+  getCalendarEvents: auth-server-dev-getCalendarEvents
