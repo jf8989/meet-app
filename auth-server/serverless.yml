@@ -1,13 +1,15 @@
 service: auth-server
 
+frameworkVersion: "4"
+
 provider:
   name: aws
   runtime: nodejs18.x
   region: us-east-1
   environment:
-    CLIENT_ID: ${env:CLIENT_ID}
-    CLIENT_SECRET: ${env:CLIENT_SECRET}
-    PROJECT_ID: ${env:PROJECT_ID}
+    CLIENT_ID: ${file(.env):CLIENT_ID}
+    CLIENT_SECRET: ${file(.env):CLIENT_SECRET}
+    PROJECT_ID: ${file(.env):PROJECT_ID}
 
 functions:
   getAuthURL:
@@ -34,16 +36,19 @@ functions:
           method: get
           cors: true
 
-build:
-  esbuild: false
+package:
+  patterns:
+    - "!**/*"
+    - "!node_modules/**"
+    - "handler.js"
+    - "package.json"
+    - ".env"
 
 custom:
-  esbuild:
-    format: esm
-    platform: node
-    target: node18
-    bundle: true
-    minify: false
-
-plugins:
-  - serverless-esbuild
+  build:
+    esbuild:
+      format: esm
+      platform: node
+      target: node18
+      sourcemap: true
+      minify: true
