@@ -5,10 +5,15 @@
   },
   "extends": "eslint:recommended",
   "parserOptions": {
-    "sourceType": "module",
-    "ecmaVersion": "latest"
+    "ecmaVersion": 2022,
+    "sourceType": "module"
   },
   "globals": {
-    "process": "readonly"
+    "exports": "writable"
+  },
+  "rules": {
+    "no-console": "off",
+    "no-unused-vars": "warn",
+    "require-await": "warn"
   }
 }

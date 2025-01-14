@@ -1,37 +1,29 @@
 // auth-server/handler.js
 import { google } from 'googleapis';
-import * as dotenv from 'dotenv';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import process from 'process';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// Load environment variables
-dotenv.config({ path: path.resolve(__dirname, '.env') });
-
 const calendar = google.calendar('v3');
-const { OAuth2 } = google.auth;
+const OAuth2 = google.auth.OAuth2;
 
 const SCOPES = ['https://www.googleapis.com/auth/calendar.readonly'];
 const CALENDAR_ID = 'fullstackwebdev@careerfoundry.com';
 
-// Create OAuth2 client
+// Create OAuth2 client with credentials from config.json
+import fs from 'fs';
+
+const credentials = JSON.parse(fs.readFileSync('./config.json', 'utf8'));
 const oAuth2Client = new OAuth2(
-    process.env.CLIENT_ID,
-    process.env.CLIENT_SECRET,
-    'https://meet-app-roan.vercel.app/'  // Use your primary redirect URI here
+    credentials.CLIENT_ID,
+    credentials.CLIENT_SECRET,
+    'https://meet-app-roan.vercel.app/'
 );
 
 const headers = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Credentials': true,
     'Access-Control-Allow-Methods': 'GET,HEAD,OPTIONS,POST,PUT',
-    'Access-Control-Allow-Headers': 'Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers'
+    'Access-Control-Allow-Headers': 'Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers',
+    'Content-Type': 'application/json'
 };
 
-// Utility function for standardized error responses
 const createErrorResponse = (statusCode, error) => {
     console.error('Error details:', {
         name: error.name,
@@ -55,11 +47,14 @@ const createErrorResponse = (statusCode, error) => {
 
 export const getAuthURL = async () => {
     console.log('getAuthURL function started');
+    console.log('Environment credentials:', {
+        CLIENT_ID: credentials.CLIENT_ID,
+        CLIENT_SECRET: credentials.CLIENT_SECRET,
+    });
 
     try {
-        // Verify environment variables
-        if (!process.env.CLIENT_ID || !process.env.CLIENT_SECRET) {
-            throw new Error('Missing required environment variables');
+        if (!credentials.CLIENT_ID || !credentials.CLIENT_SECRET) {
+            throw new Error('Missing required credentials');
         }
 
         console.log('Generating auth URL with scopes:', SCOPES);
@@ -68,13 +63,11 @@ export const getAuthURL = async () => {
             scope: SCOPES,
         });
 
-        console.log('Auth URL generated successfully');
+        console.log('Auth URL generated successfully:', authUrl);
         return {
             statusCode: 200,
             headers,
-            body: JSON.stringify({
-                authUrl,
-            }),
+            body: JSON.stringify({ authUrl }),
         };
     } catch (error) {
         console.error('Error in getAuthURL:', error);
@@ -87,7 +80,6 @@ export const getAccessToken = async (event) => {
     console.log('Event received:', JSON.stringify(event));
 
     try {
-        // Verify event parameters
         if (!event.pathParameters || !event.pathParameters.code) {
             throw new Error('No code parameter provided');
         }
@@ -123,7 +115,6 @@ export const getCalendarEvents = async (event) => {
     console.log('Event received:', JSON.stringify(event));
 
     try {
-        // Verify event parameters
         if (!event.pathParameters || !event.pathParameters.access_token) {
             throw new Error('No access_token parameter provided');
         }

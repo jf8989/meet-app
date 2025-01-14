@@ -18,7 +18,16 @@ functions:
       - http:
           path: api/get-auth-url
           method: get
-          cors: true
+          cors:
+            origin: "*"
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
+            allowCredentials: false
 
   getAccessToken:
     handler: handler.getAccessToken
@@ -26,7 +35,16 @@ functions:
       - http:
           path: api/token/{code}
           method: get
-          cors: true
+          cors:
+            origin: "*"
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
+            allowCredentials: false
 
   getCalendarEvents:
     handler: handler.getCalendarEvents
@@ -34,15 +52,30 @@ functions:
       - http:
           path: api/get-events/{access_token}
           method: get
-          cors: true
+          cors:
+            origin: "*"
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
+            allowCredentials: false
 
 plugins:
+  - serverless-esbuild
   - serverless-offline
 
+custom:
+  esbuild:
+    bundle: true
+    minify: true
+    sourcemap: true
+    target: node18
+    external: []
+    # Removed the include option from here
+
 package:
-  patterns:
-    - "!**/*"
-    - "!node_modules/**"
-    - "handler.js"
-    - "package.json"
-    - "config.json"
+  include:
+    - config.json

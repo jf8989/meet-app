@@ -57,21 +57,28 @@
 
     <script>
         // STEP 1
-        const getAuthURL = "https://c8hxspnpk5.execute-api.us-east-1.amazonaws.com/dev/api/get-auth-url";
-        document.getElementById("getAuthUrlButton").onclick = () => {
+        const getAuthURL = "https://rec0ldppe5.execute-api.us-east-1.amazonaws.com/dev/api/get-auth-url";
+
+        const getAuthUrlButton = document.getElementById("getAuthUrlButton");
+        const resultElement = document.getElementById("result");
+        getAuthUrlButton.onclick = () => {
             fetch(getAuthURL)
                 .then(res => res.json())
                 .then(json => {
-                    const result = document.getElementById("result");
                     const { authUrl } = json;
-                    result.innerHTML = `<a href="${authUrl}">Click to authorize</a>`;
+                    resultElement.innerHTML = `<a href="${authUrl}">Click to authorize</a>`;
                 });
         };
 
         // STEP 2
-        const getTokenEndpoint = "https://c8hxspnpk5.execute-api.us-east-1.amazonaws.com/dev/api/token";
-        document.getElementById("getToken").onclick = () => {
-            let code = document.getElementById("code").value;
+        const getTokenEndpoint = "https://rec0ldppe5.execute-api.us-east-1.amazonaws.com/dev/api/token";
+        const codeElement = document.getElementById("code");
+        const getTokenButton = document.getElementById("getToken");
+        const accessTokenElement = document.getElementById("accessToken");
+
+        getTokenButton.onclick = () => {
+            let code = codeElement.value;
+            // If the code is not URL-encoded, encode it
             if (decodeURIComponent(code) === code) {
                 code = encodeURIComponent(code);
             }
@@ -79,19 +86,22 @@
             fetch(getTokenRequest)
                 .then(res => res.json())
                 .then(json => {
-                    document.getElementById("accessToken").innerText = JSON.stringify(json, null, 2);
+                    accessTokenElement.innerText = JSON.stringify(json, null, 2);
                 });
         };
 
         // STEP 3
-        const getCalendarEvents = "https://c8hxspnpk5.execute-api.us-east-1.amazonaws.com/dev/api/get-events";
-        document.getElementById("getEvents").onclick = () => {
-            const accessToken = JSON.parse(document.getElementById("accessToken").innerText).access_token;
+        const getCalendarEvents = "https://rec0ldppe5.execute-api.us-east-1.amazonaws.com/dev/api/get-events";
+        const getEventsButton = document.getElementById("getEvents");
+        const eventsElement = document.getElementById("events");
+
+        getEventsButton.onclick = () => {
+            const accessToken = JSON.parse(accessTokenElement.innerText).access_token;
             const eventRequest = getCalendarEvents + "/" + accessToken;
             fetch(eventRequest)
                 .then(res => res.json())
                 .then(json => {
-                    document.getElementById("events").innerText = JSON.stringify(json, null, 2);
+                    eventsElement.innerText = JSON.stringify(json, null, 2);
                 });
         };
     </script>

@@ -1,6 +1,7 @@
 {
   "name": "auth-server",
   "version": "1.0.0",
+  "type": "module",
   "description": "Serverless auth server for Meet app",
   "main": "handler.js",
   "dependencies": {
@@ -11,6 +12,7 @@
   },
   "devDependencies": {
     "serverless-dotenv-plugin": "^6.0.0",
+    "serverless-esbuild": "^1.54.6",
     "serverless-offline": "^12.0.4"
   }
 }
