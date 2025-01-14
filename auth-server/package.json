@@ -3,16 +3,14 @@
   "version": "1.0.0",
   "description": "Serverless auth server for Meet app",
   "main": "handler.js",
-  "type": "module",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "auth-server": "file:",
     "dotenv": "^16.4.7",
-    "googleapis": "^144.0.0"
+    "googleapis": "^144.0.0",
+    "serverless": "^3.40.0"
+  },
+  "devDependencies": {
+    "serverless-dotenv-plugin": "^6.0.0",
+    "serverless-offline": "^12.0.4"
   }
 }
