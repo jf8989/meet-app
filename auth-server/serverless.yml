@@ -74,7 +74,6 @@ custom:
     sourcemap: true
     target: node18
     external: []
-    # Removed the include option from here
 
 package:
   include:

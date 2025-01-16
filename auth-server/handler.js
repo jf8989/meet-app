@@ -1,29 +1,31 @@
 // auth-server/handler.js
 import { google } from 'googleapis';
-const calendar = google.calendar('v3');
-const OAuth2 = google.auth.OAuth2;
-
-const SCOPES = ['https://www.googleapis.com/auth/calendar.readonly'];
-const CALENDAR_ID = 'fullstackwebdev@careerfoundry.com';
-
-// Create OAuth2 client with credentials from config.json
 import fs from 'fs';
 
+// Pull in credentials from config.json
 const credentials = JSON.parse(fs.readFileSync('./config.json', 'utf8'));
+
+// Create an OAuth2 client
+const OAuth2 = google.auth.OAuth2;
 const oAuth2Client = new OAuth2(
     credentials.CLIENT_ID,
     credentials.CLIENT_SECRET,
-    'https://meet-app-roan.vercel.app/'
+    credentials.REDIRECT_URI
 );
 
+// Google Calendar object for queries
+const calendar = google.calendar('v3');
+
+// Set default headers for CORS, JSON, etc.
 const headers = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Credentials': true,
     'Access-Control-Allow-Methods': 'GET,HEAD,OPTIONS,POST,PUT',
     'Access-Control-Allow-Headers': 'Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers',
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
 };
 
+// Helper for standardized error responses
 const createErrorResponse = (statusCode, error) => {
     console.error('Error details:', {
         name: error.name,
@@ -45,25 +47,26 @@ const createErrorResponse = (statusCode, error) => {
     };
 };
 
+/**
+ * 1) getAuthURL - returns the Google OAuth URL
+ */
 export const getAuthURL = async () => {
     console.log('getAuthURL function started');
-    console.log('Environment credentials:', {
-        CLIENT_ID: credentials.CLIENT_ID,
-        CLIENT_SECRET: credentials.CLIENT_SECRET,
-    });
+    console.log('Using redirect URI:', credentials.REDIRECT_URI);
 
     try {
         if (!credentials.CLIENT_ID || !credentials.CLIENT_SECRET) {
-            throw new Error('Missing required credentials');
+            throw new Error('Missing required credentials in config.json');
         }
 
-        console.log('Generating auth URL with scopes:', SCOPES);
+        // Request offline access and the desired scope
+        const scopes = ['https://www.googleapis.com/auth/calendar.readonly'];
+
         const authUrl = oAuth2Client.generateAuthUrl({
             access_type: 'offline',
-            scope: SCOPES,
+            scope: scopes,
         });
 
-        console.log('Auth URL generated successfully:', authUrl);
         return {
             statusCode: 200,
             headers,
@@ -75,82 +78,70 @@ export const getAuthURL = async () => {
     }
 };
 
+/**
+ * 2) getAccessToken - exchanges an auth code for tokens
+ */
 export const getAccessToken = async (event) => {
     console.log('getAccessToken function started');
-    console.log('Event received:', JSON.stringify(event));
 
     try {
         if (!event.pathParameters || !event.pathParameters.code) {
-            throw new Error('No code parameter provided');
+            throw new Error('No code parameter provided in the request');
         }
 
-        const code = decodeURIComponent(`${event.pathParameters.code}`);
-        console.log('Decoded authorization code received');
+        const code = decodeURIComponent(event.pathParameters.code);
+        console.log('Decoded authorization code:', code);
 
-        try {
-            console.log('Attempting to get tokens from Google');
-            const { tokens } = await oAuth2Client.getToken(code);
-            console.log('Tokens successfully retrieved');
+        const { tokens } = await oAuth2Client.getToken(code);
+        console.log('Tokens received from Google:', tokens);
 
-            return {
-                statusCode: 200,
-                headers,
-                body: JSON.stringify(tokens),
-            };
-        } catch (googleError) {
-            console.error('Error getting tokens from Google:', googleError);
-            return createErrorResponse(401, {
-                ...googleError,
-                message: 'Failed to authenticate with Google. Please try again.'
-            });
-        }
+        return {
+            statusCode: 200,
+            headers,
+            body: JSON.stringify(tokens),
+        };
     } catch (error) {
         console.error('Error in getAccessToken:', error);
         return createErrorResponse(500, error);
     }
 };
 
+/**
+ * 3) getCalendarEvents - uses the access_token to fetch events
+ */
 export const getCalendarEvents = async (event) => {
     console.log('getCalendarEvents function started');
-    console.log('Event received:', JSON.stringify(event));
 
     try {
         if (!event.pathParameters || !event.pathParameters.access_token) {
-            throw new Error('No access_token parameter provided');
+            throw new Error('No access_token provided in the request');
         }
 
-        const access_token = decodeURIComponent(`${event.pathParameters.access_token}`);
-        console.log('Decoded access token received');
+        // Grab the token from pathParameters
+        const access_token = decodeURIComponent(event.pathParameters.access_token);
+        console.log('Decoded access token:', access_token);
 
-        try {
-            console.log('Setting credentials in OAuth2 client');
-            oAuth2Client.setCredentials({ access_token });
+        // Set credentials so that calendar.events.list() can authenticate
+        oAuth2Client.setCredentials({ access_token });
 
-            console.log('Requesting calendar events from Google');
-            const results = await calendar.events.list({
-                calendarId: CALENDAR_ID,
-                auth: oAuth2Client,
-                timeMin: new Date().toISOString(),
-                singleEvents: true,
-                orderBy: 'startTime',
-            });
+        // Make the call to Google Calendar
+        const results = await calendar.events.list({
+            calendarId: credentials.CALENDAR_ID,
+            auth: oAuth2Client,
+            timeMin: new Date().toISOString(),
+            singleEvents: true,
+            orderBy: 'startTime',
+        });
 
-            console.log(`Successfully retrieved ${results.data.items.length} events`);
-            return {
-                statusCode: 200,
-                headers,
-                body: JSON.stringify({
-                    events: results.data.items,
-                    count: results.data.items.length
-                }),
-            };
-        } catch (googleError) {
-            console.error('Error getting calendar events from Google:', googleError);
-            return createErrorResponse(401, {
-                ...googleError,
-                message: 'Failed to fetch calendar events. Token might be invalid or expired.'
-            });
-        }
+        // Return the data in a consistent shape
+        return {
+            statusCode: 200,
+            headers,
+            body: JSON.stringify({
+                events: results.data.items,
+                count: results.data.items.length,
+            }),
+        };
     } catch (error) {
         console.error('Error in getCalendarEvents:', error);
         return createErrorResponse(500, error);
