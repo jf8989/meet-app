@@ -1,5 +1,4 @@
 // src/components/CitySearch.jsx
-
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 
@@ -25,7 +24,7 @@ const CitySearch = ({ allLocations }) => {
     };
 
     return (
-        <div className="CitySearch">
+        <div id="city-search" className="CitySearch">
             <input
                 type="text"
                 className="city"
@@ -51,6 +50,7 @@ const CitySearch = ({ allLocations }) => {
         </div>
     );
 };
+
 CitySearch.propTypes = {
     allLocations: PropTypes.array.isRequired,
 };

@@ -7,10 +7,13 @@ const NumberOfEvents = ({ setCurrentNOE }) => {
 
     const handleInputChanged = (event) => {
         const value = event.target.value;
-        if (parseInt(value) >= 1 && parseInt(value) <= 99) {
+
+        // Check if value is valid
+        if (value === "" || (parseInt(value) >= 1 && parseInt(value) <= 99)) {
             setQuery(value);
             setCurrentNOE(value);
         } else {
+            // For invalid input, reset to 32
             setQuery("32");
             setCurrentNOE("32");
         }
@@ -23,12 +26,19 @@ const NumberOfEvents = ({ setCurrentNOE }) => {
                 className="event-number-input"
                 value={query}
                 onChange={handleInputChanged}
+                onBlur={() => {
+                    if (query === "") {
+                        setQuery("32");
+                        setCurrentNOE("32");
+                    }
+                }}
                 min="1"
                 max="99"
             />
         </div>
     );
 };
+
 NumberOfEvents.propTypes = {
     setCurrentNOE: PropTypes.func.isRequired,
 };
