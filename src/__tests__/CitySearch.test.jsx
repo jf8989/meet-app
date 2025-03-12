@@ -14,21 +14,21 @@ describe('<CitySearch /> component', () => {
     });
 
     test('renders text input', () => {
-        render(<CitySearch allLocations={locations} />);
+        render(<CitySearch allLocations={locations} setCurrentCity={() => { }} />);
         const cityTextBox = screen.getByRole('textbox');
         expect(cityTextBox).toBeInTheDocument();
         expect(cityTextBox).toHaveClass('city');
     });
 
     test('suggestions list is hidden by default', () => {
-        render(<CitySearch allLocations={locations} />);
+        render(<CitySearch allLocations={locations} setCurrentCity={() => { }} />);
         const suggestionList = screen.queryByRole('list');
         expect(suggestionList).not.toBeInTheDocument();
     });
 
     test('renders a list of suggestions when city textbox has input', async () => {
         const user = userEvent.setup();
-        render(<CitySearch allLocations={locations} />);
+        render(<CitySearch allLocations={locations} setCurrentCity={() => { }} />);
 
         const cityTextBox = screen.getByRole('textbox');
         await user.type(cityTextBox, 'London');
@@ -37,13 +37,14 @@ describe('<CitySearch /> component', () => {
         const suggestions = within(suggestionList).queryAllByRole('listitem');
 
         expect(suggestionList).toBeInTheDocument();
-        expect(suggestions).toHaveLength(1);
+        expect(suggestions.length).toBe(2); // Changed from 1 to 2 to account for "See all cities"
         expect(suggestions[0].textContent).toEqual('London, UK');
+        expect(suggestions[1].textContent).toEqual('See all cities'); // Add this check
     });
 
     test('updates input value when suggestion is clicked', async () => {
         const user = userEvent.setup();
-        render(<CitySearch allLocations={locations} />);
+        render(<CitySearch allLocations={locations} setCurrentCity={() => { }} />);
 
         const cityTextBox = screen.getByRole('textbox');
         await user.type(cityTextBox, 'London');

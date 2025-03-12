@@ -12,21 +12,21 @@ describe('<NumberOfEvents /> Component', () => {
     });
 
     test('renders number input with default value of 32', () => {
-        render(<NumberOfEvents setCurrentNOE={setCurrentNOE} />);
+        render(<NumberOfEvents setCurrentNOE={setCurrentNOE} currentNOE="32" />);
         const numberInput = screen.getByRole('spinbutton');
         expect(numberInput).toBeInTheDocument();
         expect(numberInput.value).toBe("32");
     });
 
     test('renders number input', () => {
-        render(<NumberOfEvents setCurrentNOE={setCurrentNOE} />);
+        render(<NumberOfEvents setCurrentNOE={setCurrentNOE} currentNOE="32" />);
         const numberInput = screen.getByRole('spinbutton');
         expect(numberInput).toBeInTheDocument();
     });
 
     test('number of events updates when user types', async () => {
         const user = userEvent.setup();
-        render(<NumberOfEvents setCurrentNOE={setCurrentNOE} />);
+        render(<NumberOfEvents setCurrentNOE={setCurrentNOE} currentNOE="32" />);
         const numberInput = screen.getByRole('spinbutton');
 
         await user.type(numberInput, "10", { initialSelectionStart: 0, initialSelectionEnd: 2 });
@@ -37,7 +37,7 @@ describe('<NumberOfEvents /> Component', () => {
 
     test('prevents invalid inputs', async () => {
         const user = userEvent.setup();
-        render(<NumberOfEvents setCurrentNOE={setCurrentNOE} />);
+        render(<NumberOfEvents setCurrentNOE={setCurrentNOE} currentNOE="32" />);
         const numberInput = screen.getByRole('spinbutton');
 
         // Type an invalid value and trigger change
