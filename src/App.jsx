@@ -16,6 +16,7 @@ const App = () => {
     const fetchData = async () => {
       try {
         const allEvents = await getEvents();
+        console.log("Fetched events:", allEvents);
 
         if (!allEvents) {
           setEvents([]);
