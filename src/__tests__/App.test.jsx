@@ -15,10 +15,13 @@ vi.mock('../api', () => ({
 }));
 
 describe('<App /> Component', () => {
-    test('renders list of events', () => {
+    test('renders list of events', async () => {
         const { container } = render(<App />);
-        const eventList = container.querySelector('#event-list');
-        expect(eventList).toBeTruthy();
+        // Wait for the event list to be rendered
+        await waitFor(() => {
+            const eventList = container.querySelector('#event-list');
+            expect(eventList).toBeTruthy();
+        });
     });
 
     test('renders CitySearch', () => {
@@ -31,6 +34,13 @@ describe('<App /> Component', () => {
         const { container } = render(<App />);
         const numberOfEvents = container.querySelector('#number-of-events');
         expect(numberOfEvents).toBeTruthy();
+    });
+
+    // Add test for alerts container
+    test('renders alerts container', () => {
+        const { container } = render(<App />);
+        const alertsContainer = container.querySelector('.alerts-container');
+        expect(alertsContainer).toBeTruthy();
     });
 
     // Integration Tests

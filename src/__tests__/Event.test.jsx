@@ -1,10 +1,10 @@
 // src/__tests__/Event.test.jsx
-
 import { describe, test, expect, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import Event from '../components/Event';
 import mockData from '../mock-data/mock-events';
+import { formatDateTime } from '../utils'; // Import the format function
 
 describe('<Event /> Component', () => {
     const event = mockData[0];
@@ -19,7 +19,9 @@ describe('<Event /> Component', () => {
     });
 
     test('renders event start time', () => {
-        expect(screen.getByText(event.created)).toBeTruthy();
+        // Use the same formatting function that your component uses
+        const formattedDate = formatDateTime(event.created);
+        expect(screen.getByText(formattedDate)).toBeTruthy();
     });
 
     test('renders event location', () => {
@@ -31,8 +33,9 @@ describe('<Event /> Component', () => {
     });
 
     test('event details are hidden by default', () => {
-        const details = screen.queryByText(event.description);
-        expect(details).not.toBeInTheDocument();
+        // Check if the details div doesn't have the 'expanded' class
+        const detailsElement = screen.getByText(event.description).closest('.details');
+        expect(detailsElement).not.toHaveClass('expanded');
     });
 
     // Scenario 2: User can expand event to see details
@@ -41,8 +44,8 @@ describe('<Event /> Component', () => {
         const showDetailsButton = screen.getByText('Show Details');
         await user.click(showDetailsButton);
 
-        const details = screen.getByText(event.description);
-        expect(details).toBeTruthy();
+        const detailsElement = screen.getByText(event.description).closest('.details');
+        expect(detailsElement).toHaveClass('expanded');
         expect(screen.getByText('Hide Details')).toBeTruthy();
     });
 
@@ -55,8 +58,8 @@ describe('<Event /> Component', () => {
         const hideDetailsButton = screen.getByText('Hide Details');
         await user.click(hideDetailsButton);
 
-        const details = screen.queryByText(event.description);
-        expect(details).not.toBeInTheDocument();
+        const detailsElement = screen.getByText(event.description).closest('.details');
+        expect(detailsElement).not.toHaveClass('expanded');
         expect(screen.getByText('Show Details')).toBeTruthy();
     });
 });

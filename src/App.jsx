@@ -4,6 +4,7 @@ import CitySearch from './components/CitySearch';
 import EventList from './components/EventList';
 import NumberOfEvents from './components/NumberOfEvents';
 import { getEvents, extractLocations } from './api';
+import { InfoAlert, ErrorAlert } from './components/Alert'; // Import Alert components
 import './App.css';
 
 const App = () => {
@@ -12,6 +13,8 @@ const App = () => {
   const [allLocations, setAllLocations] = useState([]);
   const [currentCity, setCurrentCity] = useState("See all cities");
   const [isLoading, setIsLoading] = useState(false);
+  const [infoAlert, setInfoAlert] = useState(""); // Add info alert state
+  const [errorAlert, setErrorAlert] = useState(""); // Add error alert state
 
   // We'll add a debounced version of setCurrentNOE
   const handleNOEChange = (value) => {
@@ -55,14 +58,21 @@ const App = () => {
     <div className="App">
       <div className="app-header">
         <h1>Meet App</h1>
+        {/* Add alerts container */}
+        <div className="alerts-container">
+          {infoAlert && <InfoAlert text={infoAlert} />}
+          {errorAlert && <ErrorAlert text={errorAlert} />}
+        </div>
         <div className="search-controls">
           <CitySearch
             allLocations={allLocations}
             setCurrentCity={setCurrentCity}
+            setInfoAlert={setInfoAlert} // Pass the info alert setter
           />
           <NumberOfEvents
             setCurrentNOE={handleNOEChange}
             currentNOE={currentNOE}
+            setErrorAlert={setErrorAlert} // Pass the error alert setter
           />
         </div>
       </div>

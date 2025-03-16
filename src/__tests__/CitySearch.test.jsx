@@ -1,34 +1,54 @@
 // src/__tests__/CitySearch.test.jsx
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, test, expect, beforeAll } from 'vitest';
+import { describe, test, expect, beforeAll, vi } from 'vitest';
 import CitySearch from '../components/CitySearch';
 import { extractLocations } from '../api';
 import mockData from '../mock-data/mock-events';
 
 describe('<CitySearch /> component', () => {
     let locations;
+    let setInfoAlertMock;
 
     beforeAll(() => {
         locations = extractLocations(mockData);
+        setInfoAlertMock = vi.fn();
     });
 
     test('renders text input', () => {
-        render(<CitySearch allLocations={locations} setCurrentCity={() => { }} />);
+        render(
+            <CitySearch
+                allLocations={locations}
+                setCurrentCity={() => { }}
+                setInfoAlert={setInfoAlertMock}
+            />
+        );
         const cityTextBox = screen.getByRole('textbox');
         expect(cityTextBox).toBeInTheDocument();
         expect(cityTextBox).toHaveClass('city');
     });
 
     test('suggestions list is hidden by default', () => {
-        render(<CitySearch allLocations={locations} setCurrentCity={() => { }} />);
+        render(
+            <CitySearch
+                allLocations={locations}
+                setCurrentCity={() => { }}
+                setInfoAlert={setInfoAlertMock}
+            />
+        );
         const suggestionList = screen.queryByRole('list');
         expect(suggestionList).not.toBeInTheDocument();
     });
 
     test('renders a list of suggestions when city textbox has input', async () => {
         const user = userEvent.setup();
-        render(<CitySearch allLocations={locations} setCurrentCity={() => { }} />);
+        render(
+            <CitySearch
+                allLocations={locations}
+                setCurrentCity={() => { }}
+                setInfoAlert={setInfoAlertMock}
+            />
+        );
 
         const cityTextBox = screen.getByRole('textbox');
         await user.type(cityTextBox, 'London');
@@ -44,7 +64,13 @@ describe('<CitySearch /> component', () => {
 
     test('updates input value when suggestion is clicked', async () => {
         const user = userEvent.setup();
-        render(<CitySearch allLocations={locations} setCurrentCity={() => { }} />);
+        render(
+            <CitySearch
+                allLocations={locations}
+                setCurrentCity={() => { }}
+                setInfoAlert={setInfoAlertMock}
+            />
+        );
 
         const cityTextBox = screen.getByRole('textbox');
         await user.type(cityTextBox, 'London');

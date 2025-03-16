@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 
-const NumberOfEvents = ({ setCurrentNOE, currentNOE }) => {
+const NumberOfEvents = ({ setCurrentNOE, currentNOE, setErrorAlert }) => {
     const [query, setQuery] = useState(currentNOE);
     const debounceTimeout = useRef(null);
 
@@ -24,7 +24,14 @@ const NumberOfEvents = ({ setCurrentNOE, currentNOE }) => {
         const value = event.target.value;
 
         // Check if value is valid
-        if (value === "" || (parseInt(value) >= 1 && parseInt(value) <= 99)) {
+        if (isNaN(value) || parseInt(value) <= 0) {
+            // Set error alert for invalid input
+            setErrorAlert('Number of events must be a positive number');
+            // Reset to a valid value
+            setQuery(currentNOE);
+        } else if (value === "" || (parseInt(value) >= 1 && parseInt(value) <= 99)) {
+            // Valid input - clear any error alerts
+            setErrorAlert('');
             setQuery(value);
 
             // Clear any existing timeout
@@ -37,16 +44,9 @@ const NumberOfEvents = ({ setCurrentNOE, currentNOE }) => {
                 setCurrentNOE(value === "" ? "32" : value);
             }, 800);
         } else {
-            // For invalid input, reset to 32
-            setQuery("32");
-
-            if (debounceTimeout.current) {
-                clearTimeout(debounceTimeout.current);
-            }
-
-            debounceTimeout.current = setTimeout(() => {
-                setCurrentNOE("32");
-            }, 800);
+            // For other invalid input like >99, set error and reset to previous value
+            setErrorAlert('Number of events must be between 1 and 99');
+            setQuery(currentNOE);
         }
     };
 
@@ -63,6 +63,7 @@ const NumberOfEvents = ({ setCurrentNOE, currentNOE }) => {
                     if (query === "") {
                         setQuery("32");
                         setCurrentNOE("32");
+                        setErrorAlert(''); // Clear error on blur if reset to default
                     }
                 }}
                 min="1"
@@ -75,6 +76,7 @@ const NumberOfEvents = ({ setCurrentNOE, currentNOE }) => {
 NumberOfEvents.propTypes = {
     setCurrentNOE: PropTypes.func.isRequired,
     currentNOE: PropTypes.string.isRequired,
+    setErrorAlert: PropTypes.func.isRequired, // Add PropTypes for setErrorAlert
 };
 
 export default NumberOfEvents;

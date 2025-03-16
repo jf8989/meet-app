@@ -2,26 +2,34 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 
-const CitySearch = ({ allLocations, setCurrentCity }) => {
+const CitySearch = ({ allLocations, setCurrentCity, setInfoAlert }) => {
     const [query, setQuery] = useState('');
     const [suggestions, setSuggestions] = useState([]);
     const [showSuggestions, setShowSuggestions] = useState(false);
 
     const handleInputChanged = (event) => {
         const value = event.target.value;
-        const filteredLocations = allLocations.filter((location) => {
+        const filteredLocations = allLocations ? allLocations.filter((location) => {
             return location.toUpperCase().indexOf(value.toUpperCase()) > -1;
-        });
+        }) : [];
 
         setQuery(value);
         setSuggestions(filteredLocations);
         setShowSuggestions(true);
+
+        // Add InfoAlert handling
+        if (filteredLocations.length === 0) {
+            setInfoAlert('We cannot find the city you are looking for. Please try another city');
+        } else {
+            setInfoAlert('');
+        }
     };
 
     const handleItemClicked = (suggestion) => {
         setQuery(suggestion);
         setShowSuggestions(false);
         setCurrentCity(suggestion);
+        setInfoAlert(''); // Clear any alerts when a city is selected
     };
 
     return (
@@ -58,6 +66,7 @@ const CitySearch = ({ allLocations, setCurrentCity }) => {
 CitySearch.propTypes = {
     allLocations: PropTypes.array.isRequired,
     setCurrentCity: PropTypes.func.isRequired,
+    setInfoAlert: PropTypes.func.isRequired // Add PropTypes for setInfoAlert
 };
 
 export default CitySearch;
