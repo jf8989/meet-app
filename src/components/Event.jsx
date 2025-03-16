@@ -1,6 +1,7 @@
 // src/components/Event.jsx
 import { useState } from 'react';
 import PropTypes from 'prop-types';
+import { formatDateTime } from '../api';
 
 const Event = ({ event }) => {
     const [showDetails, setShowDetails] = useState(false);
@@ -8,9 +9,10 @@ const Event = ({ event }) => {
     return (
         <li className="event">
             <h2>{event.summary}</h2>
-            <p>{event.created}</p>
-            <p>{event.location}</p>
+            <p className="event-date">{formatDateTime(event.created)}</p>
+            <p className="event-location">{event.location}</p>
             <button
+                className="details-btn"
                 onClick={() => setShowDetails(!showDetails)}
             >
                 {showDetails ? 'Hide Details' : 'Show Details'}
