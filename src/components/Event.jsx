@@ -1,5 +1,4 @@
 // src/components/Event.jsx
-// src/components/Event.jsx
 
 import { useState } from 'react';
 import PropTypes from 'prop-types';
@@ -20,11 +19,9 @@ const Event = ({ event }) => {
                 {showDetails ? 'Hide Details' : 'Show Details'}
             </button>
 
-            {showDetails && (
-                <div className="details">
-                    <p>{event.description}</p>
-                </div>
-            )}
+            <div className={`details ${showDetails ? 'expanded' : ''}`}>
+                <p>{event.description}</p>
+            </div>
         </li>
     );
 };
