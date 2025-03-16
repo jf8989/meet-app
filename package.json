@@ -12,6 +12,7 @@
     "coverage": "vitest run --coverage"
   },
   "dependencies": {
+    "atatus-spa": "^4.6.4",
     "meet": "file:",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
