@@ -77,7 +77,8 @@ const getTokenAndEvents = async (code) => {
 export const getEvents = async () => {
     // Use mock data in local/test environment
     if (window.location.href.startsWith("http://localhost")) {
-        return mockData;
+        // Sort mock data by date (newest first)
+        return mockData.sort((a, b) => new Date(b.start.dateTime) - new Date(a.start.dateTime));
     }
 
     // Get access token
@@ -88,7 +89,18 @@ export const getEvents = async () => {
             `https://rec0ldppe5.execute-api.us-east-1.amazonaws.com/dev/api/get-events/${token}`
         );
         const result = await response.json();
-        return result.events;
+
+        // Sort the events by start date (newest first)
+        if (result.events && Array.isArray(result.events)) {
+            return result.events.sort((a, b) => {
+                // Safely handle cases where dateTime might be undefined
+                const dateA = a.start && a.start.dateTime ? new Date(a.start.dateTime) : new Date(0);
+                const dateB = b.start && b.start.dateTime ? new Date(b.start.dateTime) : new Date(0);
+                return dateB - dateA; // Descending order (newest first)
+            });
+        }
+
+        return result.events || [];
     }
     return [];
 };
