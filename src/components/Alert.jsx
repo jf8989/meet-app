@@ -6,14 +6,20 @@ class Alert extends Component {
     constructor(props) {
         super(props);
         this.color = null;
+        this.backgroundColor = null;
     }
 
     getStyle = () => {
         return {
             color: this.color,
+            backgroundColor: this.backgroundColor,
             fontWeight: 'bold',
+            borderRadius: '4px',
+            padding: '8px 12px',
             margin: '10px 0',
-            fontSize: '14px'
+            fontSize: '14px',
+            display: 'inline-block',
+            boxShadow: '0 2px 5px rgba(0, 0, 0, 0.3)'
         };
     }
 
@@ -26,7 +32,6 @@ class Alert extends Component {
     }
 }
 
-// Add PropTypes validation
 Alert.propTypes = {
     text: PropTypes.string.isRequired
 };
@@ -34,14 +39,16 @@ Alert.propTypes = {
 class InfoAlert extends Alert {
     constructor(props) {
         super(props);
-        this.color = 'blue';
+        this.color = '#ffffff'; // White text
+        this.backgroundColor = '#3a86ff'; // Blue background
     }
 }
 
 class ErrorAlert extends Alert {
     constructor(props) {
         super(props);
-        this.color = 'red';
+        this.color = '#ffffff'; // White text
+        this.backgroundColor = '#e63946'; // Red background
     }
 }
 

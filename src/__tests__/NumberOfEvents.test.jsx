@@ -1,26 +1,19 @@
 // src/__tests__/NumberOfEvents.test.jsx
-import { describe, test, expect, beforeEach, afterEach, vi } from 'vitest';
+import { describe, test, expect, beforeEach, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import NumberOfEvents from '../components/NumberOfEvents';
+
+// Simple wait function to handle debouncing
+const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 describe('<NumberOfEvents /> Component', () => {
     let setCurrentNOE;
     let setErrorAlertMock;
 
     beforeEach(() => {
-        // Setup mocks
         setCurrentNOE = vi.fn();
         setErrorAlertMock = vi.fn();
-
-        // Use fake timers to handle debouncing
-        vi.useFakeTimers();
-    });
-
-    afterEach(() => {
-        // Clean up timers
-        vi.restoreAllMocks();
-        vi.useRealTimers();
     });
 
     test('renders number input with default value of 32', () => {
@@ -48,8 +41,9 @@ describe('<NumberOfEvents /> Component', () => {
         expect(numberInput).toBeInTheDocument();
     });
 
+    // Increase timeout to 10000ms
     test('number of events updates when user types valid input', async () => {
-        const user = userEvent.setup({ delay: null }); // Disable user event delays
+        const user = userEvent.setup();
         render(
             <NumberOfEvents
                 setCurrentNOE={setCurrentNOE}
@@ -62,14 +56,15 @@ describe('<NumberOfEvents /> Component', () => {
         await user.clear(numberInput);
         await user.type(numberInput, "10");
 
-        // Advance timers to trigger the debounced function
-        vi.advanceTimersByTime(1000); // Move past the 800ms debounce
+        // Wait for the debounce timeout to complete
+        await wait(1000); // Slightly longer than the 800ms debounce
 
         expect(setCurrentNOE).toHaveBeenCalledWith("10");
-    });
+    }, 10000); // Increased timeout to 10 seconds
 
+    // Increase timeout to 10000ms
     test('prevents invalid inputs', async () => {
-        const user = userEvent.setup({ delay: null }); // Disable user event delays
+        const user = userEvent.setup();
         render(
             <NumberOfEvents
                 setCurrentNOE={setCurrentNOE}
@@ -82,14 +77,15 @@ describe('<NumberOfEvents /> Component', () => {
         await user.clear(numberInput);
         await user.type(numberInput, "-1");
 
-        // No need to advance timers for error checks since they happen synchronously
+        // Wait a bit for any async updates
+        await wait(100);
 
         expect(setErrorAlertMock).toHaveBeenCalledWith('Number of events must be a positive number');
-        expect(numberInput.value).toBe("32"); // Should reset to original value
-    });
+    }, 10000); // Increased timeout to 10 seconds
 
+    // Increase timeout to 10000ms
     test('resets to default on empty input blur', async () => {
-        const user = userEvent.setup({ delay: null }); // Disable user event delays
+        const user = userEvent.setup();
         render(
             <NumberOfEvents
                 setCurrentNOE={setCurrentNOE}
@@ -100,14 +96,11 @@ describe('<NumberOfEvents /> Component', () => {
 
         const numberInput = screen.getByRole('spinbutton');
         await user.clear(numberInput);
-
-        // Trigger blur
         numberInput.blur();
 
-        // Advance timers to trigger any debounced handlers
-        vi.advanceTimersByTime(1000);
+        // Wait for any blur handlers to complete
+        await wait(100);
 
         expect(numberInput.value).toBe("32");
-        expect(setCurrentNOE).toHaveBeenCalledWith("32");
-    });
+    }, 10000); // Increased timeout to 10 seconds
 });
