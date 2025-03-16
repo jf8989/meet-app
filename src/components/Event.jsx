@@ -1,7 +1,9 @@
 // src/components/Event.jsx
+// src/components/Event.jsx
+
 import { useState } from 'react';
 import PropTypes from 'prop-types';
-import { formatDateTime } from '../api';
+import { formatDateTime } from '../utils';
 
 const Event = ({ event }) => {
     const [showDetails, setShowDetails] = useState(false);
