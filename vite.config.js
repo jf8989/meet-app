@@ -14,7 +14,7 @@ export default defineConfig({
         name: 'Meet App',
         short_name: 'MeetApp',
         description: 'An app to view upcoming events by city',
-        theme_color: '#3a86ff',
+        theme_color: '#4f46e5',
         background_color: '#ffffff',
         display: 'standalone',
         icons: [

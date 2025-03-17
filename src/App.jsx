@@ -4,7 +4,8 @@ import CitySearch from './components/CitySearch';
 import EventList from './components/EventList';
 import NumberOfEvents from './components/NumberOfEvents';
 import { getEvents, extractLocations } from './api';
-import { InfoAlert, ErrorAlert, WarningAlert } from './components/Alert'; // Update import
+import { InfoAlert, ErrorAlert, WarningAlert } from './components/Alert';
+import InstallPWA from './components/InstallPWA';
 import './App.css';
 
 const App = () => {
@@ -13,9 +14,9 @@ const App = () => {
   const [allLocations, setAllLocations] = useState([]);
   const [currentCity, setCurrentCity] = useState("See all cities");
   const [isLoading, setIsLoading] = useState(false);
-  const [infoAlert, setInfoAlert] = useState(""); // Add info alert state
-  const [errorAlert, setErrorAlert] = useState(""); // Add error alert state
-  const [warningAlert, setWarningAlert] = useState(""); // Add warning alert state
+  const [infoAlert, setInfoAlert] = useState("");
+  const [errorAlert, setErrorAlert] = useState("");
+  const [warningAlert, setWarningAlert] = useState("");
 
   // We'll add a debounced version of setCurrentNOE
   const handleNOEChange = (value) => {
@@ -94,6 +95,7 @@ const App = () => {
     <div className="App">
       <div className="app-header">
         <h1>Meet App</h1>
+        <InstallPWA />
         {/* Add alerts container */}
         <div className="alerts-container">
           {infoAlert && <InfoAlert text={infoAlert} />}

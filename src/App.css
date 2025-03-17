@@ -299,3 +299,23 @@ body {
   padding: 8px;
   border-radius: 4px;
 }
+
+/* In App.css */
+.install-button {
+  background-color: #3a86ff;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0;
+  transition: background-color 0.2s;
+}
+
+.install-button:hover {
+  background-color: #2563eb;
+}
