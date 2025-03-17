@@ -319,3 +319,19 @@ body {
 .install-button:hover {
   background-color: #2563eb;
 }
+
+.charts-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin: 20px 0;
+  width: 100%;
+  max-width: 1400px;
+}
+
+/* Make charts responsive on smaller screens */
+@media (max-width: 768px) {
+  .charts-container {
+    grid-template-columns: 1fr;
+  }
+}

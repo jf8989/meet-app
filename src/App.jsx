@@ -6,6 +6,8 @@ import NumberOfEvents from './components/NumberOfEvents';
 import { getEvents, extractLocations } from './api';
 import { InfoAlert, ErrorAlert, WarningAlert } from './components/Alert';
 import InstallPWA from './components/InstallPWA';
+import CityEventsChart from './components/CityEventsChart';
+import EventGenresChart from './components/EventGenresChart';
 import './App.css';
 
 const App = () => {
@@ -117,6 +119,11 @@ const App = () => {
       </div>
 
       <div className="content-container">
+        <div className="charts-container">
+          <CityEventsChart allLocations={allLocations} events={events} />
+          <EventGenresChart events={events} />
+        </div>
+
         {isLoading ? (
           <div className="loading-indicator">Loading events...</div>
         ) : (
