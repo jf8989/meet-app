@@ -32,10 +32,16 @@ const App = () => {
       setWarningAlert("You are offline. The displayed events may not be up to date.");
     }
 
+    let isMounted = true; // Add this flag to prevent state updates after unmount
+
     const fetchData = async () => {
+      if (!isMounted) return; // Don't proceed if component unmounted
+
       try {
         setIsLoading(true);
         const allEvents = await getEvents();
+
+        if (!isMounted) return; // Don't update state if unmounted
 
         if (!allEvents) {
           setEvents([]);
@@ -53,6 +59,7 @@ const App = () => {
         setAllLocations(allEvents.length > 0 ? extractLocations(allEvents) : []);
         setIsLoading(false);
       } catch (error) {
+        if (!isMounted) return; // Don't update state if unmounted
         console.error("Error fetching events:", error);
         setEvents([]);
         setIsLoading(false);
@@ -63,10 +70,11 @@ const App = () => {
 
     // Add event listeners for online/offline status changes
     const handleOnlineStatus = () => {
+      if (!isMounted) return; // Don't update state if unmounted
+
       if (navigator.onLine) {
         setWarningAlert("");
-        // Re-fetch data when coming back online
-        fetchData();
+        // We REMOVED the fetchData call here to prevent loops
       } else {
         setWarningAlert("You are offline. The displayed events may not be up to date.");
       }
@@ -76,6 +84,7 @@ const App = () => {
     window.addEventListener('offline', handleOnlineStatus);
 
     return () => {
+      isMounted = false; // Set flag to prevent state updates after unmount
       window.removeEventListener('online', handleOnlineStatus);
       window.removeEventListener('offline', handleOnlineStatus);
     };

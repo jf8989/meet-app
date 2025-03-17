@@ -75,6 +75,18 @@ const getTokenAndEvents = async (code) => {
  * Get events from API
  */
 export const getEvents = async () => {
+    // Add a simple debounce/cache mechanism
+    const now = new Date().getTime();
+    const lastFetch = localStorage.getItem("lastFetchTime");
+
+    // Only fetch fresh data if more than 10 seconds have passed
+    if (lastFetch && now - parseInt(lastFetch) < 10000) {
+        const cachedEvents = localStorage.getItem("lastEvents");
+        if (cachedEvents) {
+            return JSON.parse(cachedEvents);
+        }
+    }
+
     // Check if offline
     if (!navigator.onLine) {
         const events = localStorage.getItem("lastEvents");
@@ -87,6 +99,7 @@ export const getEvents = async () => {
         const sortedEvents = mockData.sort((a, b) => new Date(b.start.dateTime) - new Date(a.start.dateTime));
         // Cache the events for offline use
         localStorage.setItem("lastEvents", JSON.stringify(sortedEvents));
+        localStorage.setItem("lastFetchTime", now.toString());
         return sortedEvents;
     }
 
