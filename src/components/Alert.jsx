@@ -52,4 +52,12 @@ class ErrorAlert extends Alert {
     }
 }
 
-export { InfoAlert, ErrorAlert };
+class WarningAlert extends Alert {
+    constructor(props) {
+        super(props);
+        this.color = '#ffffff'; // White text
+        this.backgroundColor = '#ff9f1c'; // Amber/orange background
+    }
+}
+
+export { InfoAlert, ErrorAlert, WarningAlert };

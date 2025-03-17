@@ -4,7 +4,7 @@ import CitySearch from './components/CitySearch';
 import EventList from './components/EventList';
 import NumberOfEvents from './components/NumberOfEvents';
 import { getEvents, extractLocations } from './api';
-import { InfoAlert, ErrorAlert } from './components/Alert'; // Import Alert components
+import { InfoAlert, ErrorAlert, WarningAlert } from './components/Alert'; // Update import
 import './App.css';
 
 const App = () => {
@@ -15,6 +15,7 @@ const App = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [infoAlert, setInfoAlert] = useState(""); // Add info alert state
   const [errorAlert, setErrorAlert] = useState(""); // Add error alert state
+  const [warningAlert, setWarningAlert] = useState(""); // Add warning alert state
 
   // We'll add a debounced version of setCurrentNOE
   const handleNOEChange = (value) => {
@@ -24,6 +25,13 @@ const App = () => {
   };
 
   useEffect(() => {
+    // Check online status and set warning alert if offline
+    if (navigator.onLine) {
+      setWarningAlert("");
+    } else {
+      setWarningAlert("You are offline. The displayed events may not be up to date.");
+    }
+
     const fetchData = async () => {
       try {
         setIsLoading(true);
@@ -52,6 +60,25 @@ const App = () => {
     };
 
     fetchData();
+
+    // Add event listeners for online/offline status changes
+    const handleOnlineStatus = () => {
+      if (navigator.onLine) {
+        setWarningAlert("");
+        // Re-fetch data when coming back online
+        fetchData();
+      } else {
+        setWarningAlert("You are offline. The displayed events may not be up to date.");
+      }
+    };
+
+    window.addEventListener('online', handleOnlineStatus);
+    window.addEventListener('offline', handleOnlineStatus);
+
+    return () => {
+      window.removeEventListener('online', handleOnlineStatus);
+      window.removeEventListener('offline', handleOnlineStatus);
+    };
   }, [currentCity, currentNOE]);
 
   return (
@@ -62,6 +89,7 @@ const App = () => {
         <div className="alerts-container">
           {infoAlert && <InfoAlert text={infoAlert} />}
           {errorAlert && <ErrorAlert text={errorAlert} />}
+          {warningAlert && <WarningAlert text={warningAlert} />}
         </div>
         <div className="search-controls">
           <CitySearch

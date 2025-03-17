@@ -75,10 +75,19 @@ const getTokenAndEvents = async (code) => {
  * Get events from API
  */
 export const getEvents = async () => {
+    // Check if offline
+    if (!navigator.onLine) {
+        const events = localStorage.getItem("lastEvents");
+        return events ? JSON.parse(events) : [];
+    }
+
     // Use mock data in local/test environment
     if (window.location.href.startsWith("http://localhost")) {
         // Sort mock data by date (newest first)
-        return mockData.sort((a, b) => new Date(b.start.dateTime) - new Date(a.start.dateTime));
+        const sortedEvents = mockData.sort((a, b) => new Date(b.start.dateTime) - new Date(a.start.dateTime));
+        // Cache the events for offline use
+        localStorage.setItem("lastEvents", JSON.stringify(sortedEvents));
+        return sortedEvents;
     }
 
     // Get access token
@@ -92,14 +101,22 @@ export const getEvents = async () => {
 
         // Sort the events by start date (newest first)
         if (result.events && Array.isArray(result.events)) {
-            return result.events.sort((a, b) => {
+            const sortedEvents = result.events.sort((a, b) => {
                 // Safely handle cases where dateTime might be undefined
                 const dateA = a.start && a.start.dateTime ? new Date(a.start.dateTime) : new Date(0);
                 const dateB = b.start && b.start.dateTime ? new Date(b.start.dateTime) : new Date(0);
                 return dateB - dateA; // Descending order (newest first)
             });
+
+            // Cache the events for offline use
+            localStorage.setItem("lastEvents", JSON.stringify(sortedEvents));
+            return sortedEvents;
         }
 
+        // Cache the events for offline use even if they're not sorted
+        if (result.events) {
+            localStorage.setItem("lastEvents", JSON.stringify(result.events));
+        }
         return result.events || [];
     }
     return [];
