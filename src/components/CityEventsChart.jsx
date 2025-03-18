@@ -47,7 +47,13 @@ const CityEventsChart = ({ allLocations, events }) => {
                     />
                     <Tooltip
                         cursor={{ strokeDasharray: '3 3' }}
-                        contentStyle={{ backgroundColor: '#333', border: '1px solid #555' }}
+                        contentStyle={{
+                            backgroundColor: '#333',
+                            border: '1px solid #555',
+                            color: '#fff'
+                        }}
+                        labelStyle={{ color: '#fff' }}  // For the title text
+                        itemStyle={{ color: '#ddd' }}   // For the item/value text
                     />
                     <Scatter name="Events" data={data} fill="#8884d8" />
                 </ScatterChart>
