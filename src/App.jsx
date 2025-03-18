@@ -8,6 +8,7 @@ import { InfoAlert, ErrorAlert, WarningAlert } from './components/Alert';
 import InstallPWA from './components/InstallPWA';
 import CityEventsChart from './components/CityEventsChart';
 import EventGenresChart from './components/EventGenresChart';
+import { FaGithub, FaLinkedin } from 'react-icons/fa';
 import './App.css';
 
 const App = () => {
@@ -96,7 +97,7 @@ const App = () => {
   return (
     <div className="App">
       <div className="app-header">
-        <h1>Meet App</h1>
+        <h1><span className="highlight">Meet</span> App</h1>
         <InstallPWA />
         {/* Add alerts container */}
         <div className="alerts-container">
@@ -125,11 +126,28 @@ const App = () => {
         </div>
 
         {isLoading ? (
-          <div className="loading-indicator">Loading events...</div>
+          <div className="loading-indicator">
+            <div className="spinner"></div>
+            <p>Loading events...</p>
+          </div>
         ) : (
           <EventList events={events} />
         )}
       </div>
+
+      <footer className="app-footer">
+        <div className="footer-content">
+          <p>© 2025 Meet App | Data from Google Calendar API</p>
+          <div className="social-links">
+            <a href="https://github.com/jf8989/meet-app" target="_blank" rel="noopener noreferrer" className="social-link">
+              <FaGithub /> GitHub
+            </a>
+            <a href="https://www.linkedin.com/in/jfmarcenaroa/" target="_blank" rel="noopener noreferrer" className="social-link">
+              <FaLinkedin /> LinkedIn
+            </a>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };

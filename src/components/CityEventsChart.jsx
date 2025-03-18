@@ -23,15 +23,36 @@ const CityEventsChart = ({ allLocations, events }) => {
     }, [getData]);
 
     return (
-        <ResponsiveContainer width="99%" height={400}>
-            <ScatterChart margin={{ top: 20, right: 20, bottom: 60, left: -30 }}>
-                <CartesianGrid />
-                <XAxis type="category" dataKey="city" name="City" angle={60} interval={0} tick={{ dx: 20, dy: 40, fontSize: 14 }} />
-                <YAxis type="number" dataKey="count" name="Number of events" allowDecimals={false} />
-                <Tooltip cursor={{ strokeDasharray: '3 3' }} />
-                <Scatter name="Events" data={data} fill="#8884d8" />
-            </ScatterChart>
-        </ResponsiveContainer>
+        <div className="chart-wrapper">
+            <h2 className="chart-title">Events in Each City</h2>
+            <ResponsiveContainer width="99%" height={400}>
+                <ScatterChart margin={{ top: 20, right: 20, bottom: 60, left: -30 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#444" />
+                    <XAxis
+                        type="category"
+                        dataKey="city"
+                        name="City"
+                        angle={60}
+                        interval={0}
+                        tick={{ dx: 20, dy: 40, fontSize: 14, fill: "#ccc" }}
+                        stroke="#666"
+                    />
+                    <YAxis
+                        type="number"
+                        dataKey="count"
+                        name="Number of events"
+                        allowDecimals={false}
+                        stroke="#666"
+                        tick={{ fill: "#ccc" }}
+                    />
+                    <Tooltip
+                        cursor={{ strokeDasharray: '3 3' }}
+                        contentStyle={{ backgroundColor: '#333', border: '1px solid #555' }}
+                    />
+                    <Scatter name="Events" data={data} fill="#8884d8" />
+                </ScatterChart>
+            </ResponsiveContainer>
+        </div>
     );
 };
 CityEventsChart.propTypes = {

@@ -6,7 +6,7 @@ import { PieChart, Pie, ResponsiveContainer, Cell, Legend } from 'recharts';
 const EventGenresChart = ({ events }) => {
     const [data, setData] = useState([]);
     const genres = useMemo(() => ['React', 'JavaScript', 'Node', 'jQuery', 'Angular'], []);
-    const colors = ['#DD0000', '#00DD00', '#0000DD', '#DDDD00', '#DD00DD'];
+    const colors = ['#FF5252', '#4CAF50', '#448AFF', '#FFC107', '#9C27B0'];
 
     const getData = useCallback(() => {
         const data = genres.map(genre => {
@@ -44,22 +44,29 @@ const EventGenresChart = ({ events }) => {
     };
 
     return (
-        <ResponsiveContainer width="99%" height={400}>
-            <PieChart>
-                <Pie
-                    data={data}
-                    dataKey="value"
-                    labelLine={false}
-                    label={renderCustomizedLabel}
-                    outerRadius={130}
-                >
-                    {data.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
-                    ))}
-                </Pie>
-                <Legend verticalAlign="bottom" align="center" />
-            </PieChart>
-        </ResponsiveContainer>
+        <div className="chart-wrapper">
+            <h2 className="chart-title">Event Topics</h2>
+            <ResponsiveContainer width="99%" height={400}>
+                <PieChart>
+                    <Pie
+                        data={data}
+                        dataKey="value"
+                        labelLine={false}
+                        label={renderCustomizedLabel}
+                        outerRadius={130}
+                    >
+                        {data.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
+                        ))}
+                    </Pie>
+                    <Legend
+                        verticalAlign="bottom"
+                        align="center"
+                        formatter={(value) => <span style={{ color: '#ccc' }}>{value}</span>}
+                    />
+                </PieChart>
+            </ResponsiveContainer>
+        </div>
     );
 };
 EventGenresChart.propTypes = {
