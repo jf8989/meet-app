@@ -1,5 +1,3 @@
-// Replace your ENTIRE App.jsx with this code
-
 import { useState, useEffect } from 'react';
 import CitySearch from './components/CitySearch';
 import EventList from './components/EventList';
@@ -8,11 +6,13 @@ import { getEvents, extractLocations } from './api';
 import { InfoAlert, ErrorAlert, WarningAlert } from './components/Alert';
 import CityEventsChart from './components/CityEventsChart';
 import EventGenresChart from './components/EventGenresChart';
-import { FaGithub, FaLinkedin, FaMobileAlt } from 'react-icons/fa';
+import InstallPWA from './components/InstallPWA';
+import { FaGithub, FaLinkedin } from 'react-icons/fa';
 import './App.css';
 
 const App = () => {
-  const [events, setEvents] = useState([]);
+  const [allEvents, setAllEvents] = useState([]); // Store ALL events from API
+  const [events, setEvents] = useState([]); // Filtered events to display
   const [currentNOE, setCurrentNOE] = useState("32");
   const [allLocations, setAllLocations] = useState([]);
   const [currentCity, setCurrentCity] = useState("See all cities");
@@ -21,13 +21,19 @@ const App = () => {
   const [errorAlert, setErrorAlert] = useState("");
   const [warningAlert, setWarningAlert] = useState("");
 
-  // We'll add a debounced version of setCurrentNOE
+  // Handle number of events change WITHOUT triggering API call
   const handleNOEChange = (value) => {
-    // Loading state helps prevent multiple renders while API fetches
-    setIsLoading(true);
     setCurrentNOE(value);
+
+    // Just update the visible events by filtering and slicing the already fetched events
+    const filteredEvents = currentCity === "See all cities"
+      ? allEvents
+      : allEvents.filter(event => event.location === currentCity);
+
+    setEvents(filteredEvents.slice(0, parseInt(value)));
   };
 
+  // This effect runs when the component mounts or when city changes
   useEffect(() => {
     // Check online status and set warning alert if offline
     if (navigator.onLine) {
@@ -43,28 +49,35 @@ const App = () => {
 
       try {
         setIsLoading(true);
-        const allEvents = await getEvents();
+        const fetchedEvents = await getEvents();
 
         if (!isMounted) return; // Don't update state if unmounted
 
-        if (!allEvents) {
+        if (!fetchedEvents) {
+          setAllEvents([]);
           setEvents([]);
           setIsLoading(false);
           return;
         }
 
+        // Store all events
+        setAllEvents(fetchedEvents);
+
+        // Extract locations from all events
+        setAllLocations(fetchedEvents.length > 0 ? extractLocations(fetchedEvents) : []);
+
         // Filter events by city if needed
         const filteredEvents = currentCity === "See all cities"
-          ? allEvents
-          : allEvents.filter(event => event.location === currentCity);
+          ? fetchedEvents
+          : fetchedEvents.filter(event => event.location === currentCity);
 
-        // Update states with safeguards
-        setEvents(filteredEvents ? filteredEvents.slice(0, parseInt(currentNOE)) : []);
-        setAllLocations(allEvents.length > 0 ? extractLocations(allEvents) : []);
+        // Only show the number of events based on currentNOE
+        setEvents(filteredEvents.slice(0, parseInt(currentNOE)));
         setIsLoading(false);
       } catch (error) {
         if (!isMounted) return; // Don't update state if unmounted
         console.error("Error fetching events:", error);
+        setAllEvents([]);
         setEvents([]);
         setIsLoading(false);
       }
@@ -92,23 +105,15 @@ const App = () => {
       window.removeEventListener('online', handleOnlineStatus);
       window.removeEventListener('offline', handleOnlineStatus);
     };
-  }, [currentCity, currentNOE]);
 
-  // Simple function to handle install button click (placeholder)
-  const handleInstallClick = () => {
-    alert("App installation initiated!");
-    // In a real implementation, this would trigger the PWA install process
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentCity]);
 
   return (
     <div className="App">
       <div className="app-header">
         <div className="app-title">
           <h1><span className="highlight">Meet</span> App</h1>
-          {/* Install button moved inside app-title for mobile layout */}
-          <button onClick={handleInstallClick} className="install-button">
-            <FaMobileAlt /> Install App
-          </button>
         </div>
 
         <div className="search-area">
@@ -124,6 +129,10 @@ const App = () => {
               setErrorAlert={setErrorAlert}
             />
           </div>
+        </div>
+
+        <div className="install-area">
+          <InstallPWA />
         </div>
 
         <div className="alerts-container">
@@ -145,7 +154,10 @@ const App = () => {
             <p>Loading events...</p>
           </div>
         ) : (
-          <EventList events={events} />
+          <EventList
+            key={`${events.length}-${currentCity}`}
+            events={events}
+          />
         )}
       </div>
 

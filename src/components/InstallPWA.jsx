@@ -2,91 +2,69 @@
 import { useState, useEffect } from 'react';
 
 const InstallPWA = () => {
-    const [supportsPWA, setSupportsPWA] = useState(false);
-    const [promptInstall, setPromptInstall] = useState(null);
-    const [isInstalled, setIsInstalled] = useState(false);
+    const [installPrompt, setInstallPrompt] = useState(null);
 
     useEffect(() => {
-        // Check if app was previously installed (using localStorage)
-        const checkIfInstalled = () => {
-            const installed = localStorage.getItem('pwaInstalled');
-            if (installed === 'true') {
-                setIsInstalled(true);
-                return true;
-            }
+        // Check if app is running in standalone mode (already installed)
+        const isRunningAsInstalledPWA = window.matchMedia('(display-mode: standalone)').matches ||
+            window.navigator.standalone ||
+            document.referrer.includes('android-app://');
 
-            // Also check for standalone mode
-            const isStandalone = window.matchMedia('(display-mode: standalone)').matches ||
-                window.navigator.standalone ||
-                document.referrer.includes('android-app://');
+        if (isRunningAsInstalledPWA) {
+            // Already installed and running as PWA, no need for install button
+            return;
+        }
 
-            if (isStandalone) {
-                // If in standalone mode, update localStorage
-                localStorage.setItem('pwaInstalled', 'true');
-                setIsInstalled(true);
-                return true;
-            }
-
-            return false;
+        // Handler for the beforeinstallprompt event - only fires if app is
+        // installable AND not already installed
+        const handleInstallPrompt = (e) => {
+            e.preventDefault();
+            setInstallPrompt(e);
+            console.log('App is installable as PWA');
         };
 
-        // Initial check
-        if (!checkIfInstalled()) {
-            // Only set up the beforeinstallprompt handler if not already installed
-            const handler = (e) => {
-                e.preventDefault();
-                setPromptInstall(e);
-                setSupportsPWA(true);
-            };
+        window.addEventListener('beforeinstallprompt', handleInstallPrompt);
 
-            window.addEventListener('beforeinstallprompt', handler);
-
-            // Cleanup
-            return () => {
-                window.removeEventListener('beforeinstallprompt', handler);
-            };
-        }
-    }, []);
-
-    // Also add a check for the appinstalled event
-    useEffect(() => {
+        // Listen for successful installation
         const handleAppInstalled = () => {
-            localStorage.setItem('pwaInstalled', 'true');
-            setIsInstalled(true);
+            console.log('App was successfully installed');
+            // Hide the install button after installation
+            setInstallPrompt(null);
         };
 
         window.addEventListener('appinstalled', handleAppInstalled);
 
         return () => {
+            window.removeEventListener('beforeinstallprompt', handleInstallPrompt);
             window.removeEventListener('appinstalled', handleAppInstalled);
         };
     }, []);
 
-    const onClick = (evt) => {
-        evt.preventDefault();
-        if (!promptInstall) return;
+    const handleInstallClick = (e) => {
+        e.preventDefault();
+        if (!installPrompt) return;
 
-        promptInstall.prompt();
-        promptInstall.userChoice.then((choiceResult) => {
+        installPrompt.prompt();
+        installPrompt.userChoice.then((choiceResult) => {
             if (choiceResult.outcome === 'accepted') {
                 console.log('User accepted the install prompt');
-                // Mark as installed in localStorage
-                localStorage.setItem('pwaInstalled', 'true');
-                setIsInstalled(true);
+            } else {
+                console.log('User dismissed the install prompt');
             }
-            setPromptInstall(null);
+            // Clear the saved prompt - it can only be used once
+            setInstallPrompt(null);
         });
     };
 
-    // Don't show the button if app is installed or PWA is not supported
-    if (isInstalled || !supportsPWA) {
+    // Only render the button if we have an install prompt
+    if (!installPrompt) {
         return null;
     }
 
     return (
         <button
             className="install-button"
-            onClick={onClick}
+            onClick={handleInstallClick}
             aria-label="Install app"
             title="Install app"
         >

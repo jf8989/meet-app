@@ -28,7 +28,7 @@ body {
   width: 100%;
 }
 
-/* Fixed header - DESKTOP CENTERED SEARCH */
+/* Fixed header - DESKTOP WITH LEFT TITLE, CENTER SEARCH, RIGHT INSTALL */
 .app-header {
   position: sticky;
   top: 0;
@@ -47,6 +47,8 @@ body {
 .app-title {
   flex: 1;
   min-width: 150px;
+  display: flex;
+  align-items: center;
 }
 
 .app-header h1 {
@@ -89,6 +91,30 @@ body {
   display: flex;
   justify-content: flex-end;
   min-width: 150px;
+}
+
+/* Install button - smaller version */
+.install-button {
+  background: linear-gradient(to right, #3a86ff, #2563eb);
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin: 0;
+  transition: background-color 0.2s, transform 0.2s;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.install-button:hover {
+  background-color: #2563eb;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
 }
 
 /* Content container for events */
@@ -155,30 +181,6 @@ body {
   to {
     transform: rotate(360deg);
   }
-}
-
-/* Install button - smaller version */
-.install-button {
-  background: linear-gradient(to right, #3a86ff, #2563eb);
-  color: white;
-  border: none;
-  padding: 6px 12px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: bold;
-  font-size: 0.85rem;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  margin: 0;
-  transition: background-color 0.2s, transform 0.2s;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-.install-button:hover {
-  background-color: #2563eb;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
 }
 
 /* City Search component */
@@ -462,18 +464,24 @@ body {
 /* Responsive adjustments - MOBILE */
 @media (max-width: 992px) {
   .app-header {
-      flex-direction: column;
-      padding: 15px;
-    }
+    flex-direction: column;
+    padding: 15px;
+  }
 
-         .app-title {
-           display: flex;
-           align-items: center;
-           justify-content: center;
-           /* Center the title and button */
-           width: 100%;
-           margin-bottom: 15px;
-         }
+  .app-title {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-bottom: 15px;
+  }
+
+  .install-area {
+    /* Set to flex for mobile to show the install button */
+    display: flex;
+    margin-top: 15px;
+    width: 100%;
+    justify-content: center;
+  }
 
   .app-header h1 {
     text-align: center;
@@ -487,11 +495,6 @@ body {
   .search-controls {
     width: 100%;
   }
-
-    .install-area {
-      display: none;
-      /* Hide the original container */
-    }
 }
 
 @media (max-width: 768px) {
@@ -500,11 +503,6 @@ body {
     padding: 15px;
     gap: 15px;
   }
-
-    .app-header h1 {
-      display: inline-block;
-      margin-right: 15px;
-    }
 
   #city-search {
     width: 100%;
@@ -554,3 +552,63 @@ body {
     grid-template-columns: repeat(3, 1fr);
   }
 }
+
+/* Add to your App.css */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.event-list li {
+  animation: fadeInUp 0.4s ease-out both;
+}
+
+/* This creates a staggered effect where each event appears slightly after the previous one */
+.event-list li:nth-child(1) {
+  animation-delay: 0.05s;
+}
+
+.event-list li:nth-child(2) {
+  animation-delay: 0.1s;
+}
+
+.event-list li:nth-child(3) {
+  animation-delay: 0.15s;
+}
+
+.event-list li:nth-child(4) {
+  animation-delay: 0.2s;
+}
+
+.event-list li:nth-child(5) {
+  animation-delay: 0.25s;
+}
+
+.event-list li:nth-child(6) {
+  animation-delay: 0.3s;
+}
+
+.event-list li:nth-child(7) {
+  animation-delay: 0.35s;
+}
+
+.event-list li:nth-child(8) {
+  animation-delay: 0.4s;
+}
+
+.event-list li:nth-child(9) {
+  animation-delay: 0.45s;
+}
+
+.event-list li:nth-child(10) {
+  animation-delay: 0.5s;
+}
+
+/* Add more if needed or use a formula with nth-child(n) */
