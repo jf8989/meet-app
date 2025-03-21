@@ -97,25 +97,31 @@ const App = () => {
   return (
     <div className="App">
       <div className="app-header">
-        <h1><span className="highlight">Meet</span> App</h1>
-        <InstallPWA />
-        {/* Add alerts container */}
+        <div className="header-left">
+          <h1><span className="highlight">Meet</span> App</h1>
+          <InstallPWA />
+        </div>
+
+        <div className="header-right">
+          <div className="search-controls">
+            <CitySearch
+              allLocations={allLocations}
+              setCurrentCity={setCurrentCity}
+              setInfoAlert={setInfoAlert} // Pass the info alert setter
+            />
+            <NumberOfEvents
+              setCurrentNOE={handleNOEChange}
+              currentNOE={currentNOE}
+              setErrorAlert={setErrorAlert} // Pass the error alert setter
+            />
+          </div>
+        </div>
+
+        {/* Alerts container positioned below the header with absolute positioning */}
         <div className="alerts-container">
           {infoAlert && <InfoAlert text={infoAlert} />}
           {errorAlert && <ErrorAlert text={errorAlert} />}
           {warningAlert && <WarningAlert text={warningAlert} />}
-        </div>
-        <div className="search-controls">
-          <CitySearch
-            allLocations={allLocations}
-            setCurrentCity={setCurrentCity}
-            setInfoAlert={setInfoAlert} // Pass the info alert setter
-          />
-          <NumberOfEvents
-            setCurrentNOE={handleNOEChange}
-            currentNOE={currentNOE}
-            setErrorAlert={setErrorAlert} // Pass the error alert setter
-          />
         </div>
       </div>
 
