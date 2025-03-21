@@ -25,6 +25,13 @@ const CitySearch = ({ allLocations, setCurrentCity, setInfoAlert }) => {
         }
     };
 
+    // Add this new handler for input focus
+    const handleInputFocus = () => {
+        setSuggestions(allLocations || []);
+        setShowSuggestions(true);
+        setInfoAlert(''); // Clear any info alerts when focusing
+    };
+
     const handleItemClicked = (suggestion) => {
         setQuery(suggestion);
         setShowSuggestions(false);
@@ -39,21 +46,24 @@ const CitySearch = ({ allLocations, setCurrentCity, setInfoAlert }) => {
                 className="city"
                 placeholder="Search for a city"
                 value={query}
+                onFocus={handleInputFocus} // Add this line
                 onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
                 onChange={handleInputChanged}
             />
-            {showSuggestions && suggestions.length > 0 && (
+            {showSuggestions && (
                 <ul className="suggestions">
-                    {suggestions.map((suggestion) => {
-                        return (
+                    {suggestions.length > 0 ? (
+                        suggestions.map((suggestion) => (
                             <li
                                 key={suggestion}
                                 onClick={() => handleItemClicked(suggestion)}
                             >
                                 {suggestion}
                             </li>
-                        );
-                    })}
+                        ))
+                    ) : (
+                        <li className="no-suggestions">No cities found</li>
+                    )}
                     <li key="See all cities" onClick={() => handleItemClicked("See all cities")}>
                         <b>See all cities</b>
                     </li>
