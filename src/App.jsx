@@ -1,14 +1,14 @@
-// src/App.jsx
+// Replace your ENTIRE App.jsx with this code
+
 import { useState, useEffect } from 'react';
 import CitySearch from './components/CitySearch';
 import EventList from './components/EventList';
 import NumberOfEvents from './components/NumberOfEvents';
 import { getEvents, extractLocations } from './api';
 import { InfoAlert, ErrorAlert, WarningAlert } from './components/Alert';
-import InstallPWA from './components/InstallPWA';
 import CityEventsChart from './components/CityEventsChart';
 import EventGenresChart from './components/EventGenresChart';
-import { FaGithub, FaLinkedin } from 'react-icons/fa';
+import { FaGithub, FaLinkedin, FaMobileAlt } from 'react-icons/fa';
 import './App.css';
 
 const App = () => {
@@ -94,30 +94,38 @@ const App = () => {
     };
   }, [currentCity, currentNOE]);
 
+  // Simple function to handle install button click (placeholder)
+  const handleInstallClick = () => {
+    alert("App installation initiated!");
+    // In a real implementation, this would trigger the PWA install process
+  };
+
   return (
     <div className="App">
       <div className="app-header">
-        <div className="header-left">
+        <div className="app-title">
           <h1><span className="highlight">Meet</span> App</h1>
-          <InstallPWA />
+          {/* Install button moved inside app-title for mobile layout */}
+          <button onClick={handleInstallClick} className="install-button">
+            <FaMobileAlt /> Install App
+          </button>
         </div>
 
-        <div className="header-right">
+        <div className="search-area">
           <div className="search-controls">
             <CitySearch
               allLocations={allLocations}
               setCurrentCity={setCurrentCity}
-              setInfoAlert={setInfoAlert} // Pass the info alert setter
+              setInfoAlert={setInfoAlert}
             />
             <NumberOfEvents
               setCurrentNOE={handleNOEChange}
               currentNOE={currentNOE}
-              setErrorAlert={setErrorAlert} // Pass the error alert setter
+              setErrorAlert={setErrorAlert}
             />
           </div>
         </div>
 
-        {/* Alerts container positioned below the header with absolute positioning */}
         <div className="alerts-container">
           {infoAlert && <InfoAlert text={infoAlert} />}
           {errorAlert && <ErrorAlert text={errorAlert} />}

@@ -28,65 +28,67 @@ body {
   width: 100%;
 }
 
-/* Fixed header - MODIFIED to horizontal layout */
+/* Fixed header - DESKTOP CENTERED SEARCH */
 .app-header {
   position: sticky;
   top: 0;
   width: 100%;
   background: linear-gradient(to right, #1a1a1a, #252525);
-  padding: 25px;
+  padding: 15px 25px;
   box-shadow: 0 3px 15px rgba(0, 0, 0, 0.4);
   z-index: 100;
+  border-bottom: 1px solid #3a3a3a;
   display: flex;
-  flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid #3a3a3a;
 }
 
-/* New container for the left side of header */
-.header-left {
-  display: flex;
-  align-items: center;
-  gap: 20px;
+/* App title on left */
+.app-title {
+  flex: 1;
+  min-width: 150px;
 }
 
 .app-header h1 {
-  font-size: 2.5rem;
+  font-size: 2rem;
   font-weight: 700;
   letter-spacing: 1px;
-  margin-bottom: 0;
-  /* Changed from 20px */
+  margin: 0;
   color: #fff;
-  text-align: center;
 }
 
 .app-header h1 .highlight {
   color: #646cff;
 }
 
-/* New container for the right side of header */
-.header-right {
+/* Search controls in center */
+.search-area {
+  flex: 2;
   display: flex;
+  justify-content: center;
   align-items: center;
 }
 
 .search-controls {
   display: flex;
   flex-direction: row;
-  /* Changed from column */
   align-items: center;
   gap: 20px;
-  /* Added gap */
-  width: 100%;
-  max-width: 600px;
-  /* Increased from 500px */
-  margin: 0;
   background: rgba(30, 30, 30, 0.5);
-  padding: 15px 20px;
-  /* Reduced padding */
+  padding: 10px 20px;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  max-width: 550px;
+  width: 100%;
+  justify-content: center;
+}
+
+/* Install button on right */
+.install-area {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+  min-width: 150px;
 }
 
 /* Content container for events */
@@ -155,24 +157,41 @@ body {
   }
 }
 
-/* City Search component - MODIFIED for horizontal layout */
+/* Install button - smaller version */
+.install-button {
+  background: linear-gradient(to right, #3a86ff, #2563eb);
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin: 0;
+  transition: background-color 0.2s, transform 0.2s;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.install-button:hover {
+  background-color: #2563eb;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+/* City Search component */
 #city-search {
-  margin-bottom: 0;
-  /* Changed from 20px */
+  margin: 0;
   position: relative;
   width: auto;
-  /* Changed from 100% */
-  display: flex;
-  flex-direction: column;
-  align-items: center;
 }
 
 .city {
   width: 200px;
-  /* Changed from 100% */
-  max-width: 300px;
-  padding: 12px 15px;
-  font-size: 16px;
+  padding: 8px 15px;
+  font-size: 0.95rem;
   border-radius: 8px;
   border: 1px solid #444;
   background-color: #333;
@@ -211,45 +230,60 @@ body {
   background-color: #444;
 }
 
-/* Number of Events component - MODIFIED for horizontal layout */
+/* Number of Events component */
 .number-of-events {
   display: flex;
   flex-direction: row;
-  /* Changed from column */
   align-items: center;
-  margin-bottom: 0;
-  /* Changed from 20px */
-  width: auto;
-  /* Changed from 100% */
+  gap: 10px;
+  margin: 0;
 }
 
 .number-of-events label {
-  margin-bottom: 0;
-  /* Changed from 10px */
-  margin-right: 10px;
-  /* Added */
-  font-size: 16px;
+  margin: 0;
+  font-size: 0.95rem;
   color: #ccc;
   font-weight: 500;
+  white-space: nowrap;
 }
 
 .event-number-input {
-  width: 80px;
-  padding: 12px;
-  font-size: 16px;
+  width: 60px;
+  padding: 8px;
+  font-size: 0.95rem;
   border-radius: 8px;
   border: 1px solid #444;
   background-color: #333;
   color: #fff;
   text-align: center;
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
-  transition: all 0.2s ease;
 }
 
 .event-number-input:focus {
   border-color: #646cff;
   outline: none;
   box-shadow: 0 0 0 2px rgba(100, 108, 255, 0.25);
+}
+
+/* Alerts container */
+.alerts-container {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin: 5px auto;
+  width: 100%;
+  max-width: 600px;
+  text-align: center;
+  z-index: 90;
+}
+
+.Alert {
+  padding: 10px 15px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  font-weight: 500;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 /* Event List component - IMPROVED CENTERING */
@@ -364,149 +398,6 @@ body {
   opacity: 1;
 }
 
-/* Alerts container */
-.alerts-container {
-  position: absolute;
-  /* Changed positioning */
-  top: 100%;
-  /* Position below the header */
-  left: 0;
-  right: 0;
-  margin: 10px auto;
-  width: 100%;
-  max-width: 600px;
-  text-align: center;
-  z-index: 90;
-  /* Below the header z-index */
-}
-
-.Alert {
-  padding: 10px 15px;
-  border-radius: 8px;
-  margin-bottom: 10px;
-  font-weight: 500;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-}
-
-/* Install PWA button */
-.install-button {
-  background: linear-gradient(to right, #3a86ff, #2563eb);
-  color: white;
-  border: none;
-  padding: 8px 14px;
-  /* Reduced from 10px 18px */
-  border-radius: 6px;
-  /* Slightly smaller radius */
-  cursor: pointer;
-  font-weight: bold;
-  font-size: 0.9rem;
-  /* Added smaller font size */
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  /* Reduced from 8px */
-  margin: 0;
-  transition: background-color 0.2s, transform 0.2s;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-  /* Reduced shadow */
-}
-
-.install-button:hover {
-  background-color: #2563eb;
-  transform: translateY(-2px);
-  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.4);
-}
-
-/* Footer */
-.app-footer {
-  background: #1a1a1a;
-  color: #777;
-  text-align: center;
-  padding: 20px;
-  margin-top: 40px;
-  border-top: 1px solid #333;
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .app-header {
-    flex-direction: column;
-    /* Stack vertically on mobile */
-    align-items: center;
-    padding: 20px;
-  }
-
-  .header-left {
-    margin-bottom: 15px;
-    flex-direction: column;
-  }
-
-  .app-header h1 {
-    font-size: 2rem;
-    margin-bottom: 15px;
-  }
-
-  .search-controls {
-    flex-direction: column;
-    max-width: 500px;
-    padding: 15px;
-  }
-
-  #city-search {
-    margin-bottom: 15px;
-    width: 100%;
-  }
-
-  .city {
-    width: 100%;
-  }
-
-  .number-of-events {
-    flex-direction: column;
-    width: 100%;
-  }
-
-  .number-of-events label {
-    margin-bottom: 10px;
-    margin-right: 0;
-  }
-
-  .charts-container {
-    grid-template-columns: 1fr;
-    padding: 15px;
-  }
-
-  .event-list {
-    grid-template-columns: 1fr;
-  }
-
-  .content-container {
-    padding: 15px 10px;
-  }
-
-  .alerts-container {
-    position: static;
-    margin-top: 15px;
-  }
-}
-
-@media (min-width: 769px) and (max-width: 1199px) {
-  .event-list {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (min-width: 1200px) {
-  .content-container {
-    padding: 30px 40px;
-  }
-
-  .event-list {
-    max-width: 1600px;
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
 .details-btn {
   display: flex;
   align-items: center;
@@ -517,7 +408,7 @@ body {
   font-size: 12px;
 }
 
-/* Enhanced footer styling */
+/* Footer */
 .app-footer {
   background: #1a1a1a;
   color: #777;
@@ -566,4 +457,100 @@ body {
 .event-location svg {
   flex-shrink: 0;
   color: #646cff;
+}
+
+/* Responsive adjustments - MOBILE */
+@media (max-width: 992px) {
+  .app-header {
+      flex-direction: column;
+      padding: 15px;
+    }
+
+         .app-title {
+           display: flex;
+           align-items: center;
+           justify-content: center;
+           /* Center the title and button */
+           width: 100%;
+           margin-bottom: 15px;
+         }
+
+  .app-header h1 {
+    text-align: center;
+  }
+
+  .search-area {
+    width: 100%;
+    margin: 10px 0;
+  }
+
+  .search-controls {
+    width: 100%;
+  }
+
+    .install-area {
+      display: none;
+      /* Hide the original container */
+    }
+}
+
+@media (max-width: 768px) {
+  .search-controls {
+    flex-direction: column;
+    padding: 15px;
+    gap: 15px;
+  }
+
+    .app-header h1 {
+      display: inline-block;
+      margin-right: 15px;
+    }
+
+  #city-search {
+    width: 100%;
+  }
+
+  .city {
+    width: 100%;
+  }
+
+  .number-of-events {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .alerts-container {
+    position: static;
+    margin-top: 10px;
+  }
+
+  .charts-container {
+    grid-template-columns: 1fr;
+    padding: 15px;
+  }
+
+  .event-list {
+    grid-template-columns: 1fr;
+  }
+
+  .content-container {
+    padding: 15px 10px;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1199px) {
+  .event-list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1200px) {
+  .content-container {
+    padding: 30px 40px;
+  }
+
+  .event-list {
+    max-width: 1600px;
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
