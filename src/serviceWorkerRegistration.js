@@ -43,37 +43,32 @@ function registerValidSW(swUrl, config) {
     navigator.serviceWorker
         .register(swUrl)
         .then((registration) => {
-            // Don't check for updates more than once per session to prevent loops
-            if (!sessionStorage.getItem('swRegistered')) {
-                sessionStorage.setItem('swRegistered', 'true');
+            registration.onupdatefound = () => {
+                const installingWorker = registration.installing;
+                if (installingWorker == null) {
+                    return;
+                }
 
-                registration.onupdatefound = () => {
-                    const installingWorker = registration.installing;
-                    if (installingWorker == null) {
-                        return;
-                    }
+                installingWorker.onstatechange = () => {
+                    if (installingWorker.state === 'installed') {
+                        if (navigator.serviceWorker.controller) {
+                            // New content available
+                            console.log('New content is available');
 
-                    installingWorker.onstatechange = () => {
-                        if (installingWorker.state === 'installed') {
-                            if (navigator.serviceWorker.controller) {
-                                // New content available
-                                console.log('New content is available');
+                            if (config && config.onUpdate) {
+                                config.onUpdate(registration);
+                            }
+                        } else {
+                            // Content cached for offline use
+                            console.log('Content is cached for offline use');
 
-                                if (config && config.onUpdate) {
-                                    config.onUpdate(registration);
-                                }
-                            } else {
-                                // Content cached for offline use
-                                console.log('Content is cached for offline use');
-
-                                if (config && config.onSuccess) {
-                                    config.onSuccess(registration);
-                                }
+                            if (config && config.onSuccess) {
+                                config.onSuccess(registration);
                             }
                         }
-                    };
+                    }
                 };
-            }
+            };
         })
         .catch((error) => {
             console.error('Error during service worker registration:', error);
