@@ -143,23 +143,26 @@ const App = () => {
       </div>
 
       <div className="content-container">
+        {isLoading && (
+          <div className="loading-indicator">
+            <div className="spinner"></div>
+            <p>Loading events...</p>
+          </div>
+        )}
+
         <div className="charts-container">
           <CityEventsChart allLocations={allLocations} events={events} />
           <EventGenresChart events={events} />
         </div>
 
-        {isLoading ? (
-          <div className="loading-indicator">
-            <div className="spinner"></div>
-            <p>Loading events...</p>
-          </div>
-        ) : (
+        {!isLoading && (
           <EventList
             key={`${events.length}-${currentCity}`}
             events={events}
           />
         )}
       </div>
+
 
       <footer className="app-footer">
         <div className="footer-content">
